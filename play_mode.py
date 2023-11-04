@@ -3,7 +3,7 @@ from pico2d import *
 import game_world
 import item_mode
 import title_mode
-from grass import Grass
+from background import Background
 from boy import Boy
 import game_framework
 
@@ -24,16 +24,15 @@ def handle_events():
 
 
 def init():
-    global grass
+    global background
     global team
     global boy
-
-    grass = Grass()
-    game_world.add_object(grass, 0)
 
     boy = Boy()
     game_world.add_object(boy, 1)
 
+    background = Background(boy)
+    game_world.add_object(background, 0)
 
 def update():
     game_world.update()
