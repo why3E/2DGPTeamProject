@@ -5,36 +5,53 @@ from pico2d import get_time, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_SPACE, SDL
 import game_world
 
 def check_move_down(boy,e):
-    right_move = False
-    left_move = False
-    up_move = False
-    down_move = False
-    move_check = False
 
     if(e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN):
         if(e[1].key == SDLK_RIGHT):
-            right_move = True
+            boy.right_move = 2
+            if(boy.left_move == 2):
+                boy.left_move = 1
         if (e[1].key == SDLK_LEFT):
-            left_move = True
+            boy.left_move = 2
+            if (boy.right_move == 2):
+                boy.right_move = 1
         if (e[1].key == SDLK_UP):
-            up_move = True
+            boy.up_move = 2
+            if (boy.down_move == 2):
+                boy.down_move = 1
         if (e[1].key == SDLK_DOWN):
-            down_move = True
+            boy.down_move = 2
+            if (boy.up_move == 2):
+                boy.up_move = 1
     elif (e[0] == 'INPUT' and e[1].type == SDL_KEYUP):
-        if (e[1].key == SDLK_RIGHT):
-            right_move = False
-        if (e[1].key == SDLK_LEFT):
-            left_move = False
-        if (e[1].key == SDLK_UP):
-            up_move = False
-        if (e[1].key == SDLK_DOWN):
-            down_move = False
-    if(right_move or left_move or up_move or down_move):
+        if (e[1].key == SDLK_RIGHT and boy.right_move !=0):
+            boy.right_move = 0
+            if(boy.left_move == 1):
+                boy.left_move = 2
+        if (e[1].key == SDLK_LEFT and boy.left_move !=0):
+            boy.left_move = 0
+            if(boy.right_move == 1):
+                boy.right_move = 2
+        if (e[1].key == SDLK_UP and boy.up_move != 0):
+            boy.up_move = 0
+            if (boy.down_move == 1):
+                boy.down_move = 2
+        if (e[1].key == SDLK_DOWN and boy.down_move != 0):
+            boy.down_move = 0
+            if (boy.up_move == 1):
+                boy.up_move = 2
+    if(boy.right_move or boy.left_move or boy.up_move or boy.down_move):
         move_check = True
     else:
         move_check = False
 
     return e[0] == 'INPUT' and move_check
+
+def check_move_up(boy,e):
+    if(boy.move_check == False):
+        return e[0] == 'INPUT' and True
+    else:
+        return e[0] == 'INPUT' and False
 
 # 키 입력이 왔을때 각각 따로 키를 계산하지 않고 이미 한번 donw 눌림이 인식된 키는 up이 들어올떄까지 True로 인식시킨다.
 # 상하, 좌우 나눌필요는 없고 Run에서 이동값을 계산할때만 따로 반영하면 됨
@@ -77,13 +94,13 @@ class Run:
         boy.dir2 = 0
 
         if check_move_down(boy,e):
-            if (e[1].key == SDLK_RIGHT):
+            if (boy.right_move==2):
                 boy.dir = 1
-            elif (e[1].key == SDLK_LEFT):
+            elif (boy.left_move==2):
                 boy.dir = -1
-            if (e[1].key == SDLK_UP):
+            if (boy.up_move==2):
                 boy.dir2 = 1
-            elif (e[1].key == SDLK_DOWN):
+            elif (boy.down_move==2):
                 boy.dir2 = -1
 
     @staticmethod
@@ -110,8 +127,8 @@ class StateMachine:
         self.boy = boy
         self.cur_state = Idle
         self.transitions = {
-            Idle: {check_move_down: Run},
-            Run: { check_move_down: Run}
+            Idle: {check_move_down: Run,check_move_up: Idle},
+            Run: { check_move_down: Run,check_move_up: Idle}
         }
 
     def start(self):
@@ -137,14 +154,17 @@ class Boy:
     def __init__(self):
         self.x, self.y = 400, 300
         self.frame = 0
-        self.action = 3
+        self.right_move = 0
+        self.left_move = 0
+        self.up_move = 0
+        self.down_move = 0
         self.dir = 0
         self.dir2 = 0
         self.face_dir = 1
         self.image = load_image('character_move.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-
+        self.move_check = False
 
     def update(self):
         self.state_machine.update()
