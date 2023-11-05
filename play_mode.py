@@ -24,7 +24,6 @@ def handle_events():
 
 def init():
     global background
-    global team
     global boy
 
     boy = Boy()
@@ -32,6 +31,8 @@ def init():
 
     background = Background(boy)
     game_world.add_object(background, 0)
+
+    boy.Sword_s()
 
 def update():
     game_world.update()

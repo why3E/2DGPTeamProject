@@ -1,8 +1,26 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
-from pico2d import get_time, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_SPACE, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN
+from pico2d import get_time,clamp, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_SPACE, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN
 
+import game_framework
+from sword import Sword
 import game_world
+
+# 키 입력이 왔을때 각각 따로 키를 계산하지 않고 이미 한번 donw 눌림이 인식된 키는 up이 들어올떄까지 True로 인식시킨다.
+# 상하, 좌우 나눌필요는 없고 Run에서 이동값을 계산할때만 따로 반영하면 됨
+
+PIXEL_PER_METER = (10.0 / 0.3) # 10 pixel 30 cm
+RUN_SPEED_KMPH = 20.0 # Km / Hour
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+# fill here
+
+# Boy Action Speed
+# fill here
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 8
 
 def check_move_down(boy,e):
 
@@ -53,27 +71,20 @@ def check_move_up(boy,e):
     else:
         return e[0] == 'INPUT' and False
 
-# 키 입력이 왔을때 각각 따로 키를 계산하지 않고 이미 한번 donw 눌림이 인식된 키는 up이 들어올떄까지 True로 인식시킨다.
-# 상하, 좌우 나눌필요는 없고 Run에서 이동값을 계산할때만 따로 반영하면 됨
-#
-
-def time_out(e):
-    return e[0] == 'TIME_OUT'
-
-
-# time_out = lambda e : e[0] == 'TIME_OUT'
-
-
 class Idle:
 
     @staticmethod
     def enter(boy, e):
         boy.frame = 0
         boy.wait_time = get_time()  # pico2d import 필요
+        boy.dir=0
+        boy.dir2=0
         pass
 
     @staticmethod
     def exit(boy, e):
+
+        print('Idle exit')
         pass
 
     @staticmethod
@@ -83,9 +94,9 @@ class Idle:
     @staticmethod
     def draw(boy):
         if (boy.face_dir == 1):
-            boy.image.clip_draw(0, 0, 32, 64, 400, 300)
+            boy.image.clip_draw(0, 0, 32, 64, boy.x, boy.y)
         elif (boy.face_dir == -1):
-            boy.image.clip_composite_draw(0, 0, 32, 64, 0, 'h', 400, 300, 32, 64)
+            boy.image.clip_composite_draw(0, 0, 32, 64, 0, 'h', boy.x, boy.y, 32, 64)
 
 class Run:
     @staticmethod
@@ -95,9 +106,9 @@ class Run:
 
         if check_move_down(boy,e):
             if (boy.right_move==2):
-                boy.dir = 1
+                boy.dir, boy.face_dir = 1,1
             elif (boy.left_move==2):
-                boy.dir = -1
+                boy.dir, boy.face_dir = -1,-1
             if (boy.up_move==2):
                 boy.dir2 = 1
             elif (boy.down_move==2):
@@ -105,21 +116,24 @@ class Run:
 
     @staticmethod
     def exit(boy, e):
+        print('RUn exit')
         pass
 
     @staticmethod
     def do(boy):
-        boy.frame = (boy.frame + 1) % 4
-        boy.x += boy.dir * 5
-        boy.y += boy.dir2 * 5
+        boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        boy.x += boy.dir * RUN_SPEED_PPS * game_framework.frame_time
+        boy.x = clamp(25, boy.x, 800 - 25)
+        boy.y += boy.dir2 * RUN_SPEED_PPS * game_framework.frame_time
+        boy.y = clamp(30, boy.y, 600 )
         pass
 
     @staticmethod
     def draw(boy):
         if(boy.face_dir == 1):
-            boy.image.clip_draw(boy.frame * 32, 0, 32, 64, 400, 300)
+            boy.image.clip_draw(int(boy.frame) * 32, 0, 32, 64, boy.x, boy.y)
         elif(boy.face_dir == -1):
-            boy.image.clip_composite_draw(boy.frame * 32, 0, 32, 64 , 0, 'h', 400, 300,32,64)
+            boy.image.clip_composite_draw(int(boy.frame)* 32, 0, 32, 64 , 0, 'h', boy.x, boy.y,32,64)
 
 
 class StateMachine:
@@ -165,6 +179,7 @@ class Boy:
         self.state_machine = StateMachine(self)
         self.state_machine.start()
         self.move_check = False
+        self.item = 'sword'
 
     def update(self):
         self.state_machine.update()
@@ -173,3 +188,9 @@ class Boy:
         self.state_machine.handle_event(('INPUT', event))
     def draw(self):
         self.state_machine.draw()
+
+    def Sword_s(self):
+        if self.item == 'sword':
+            sword = Sword(self)
+            game_world.add_object(sword)
+        pass
