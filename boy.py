@@ -188,7 +188,6 @@ class Boy:
         self.state_machine.handle_event(('INPUT', event))
     def draw(self):
         self.state_machine.draw()
-
     def Sword_s(self):
         if self.item == 'sword':
             sword = Sword(self)
