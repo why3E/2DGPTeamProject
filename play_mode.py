@@ -5,6 +5,7 @@ import item_mode
 import title_mode
 from background import Background
 from boy import Boy
+from sword import Sword
 import game_framework
 
 # Game object class here
@@ -20,6 +21,7 @@ def handle_events():
             game_framework.push_mode(item_mode)
         else:
             boy.handle_event(event)
+
 
 
 def init():

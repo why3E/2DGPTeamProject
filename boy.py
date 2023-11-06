@@ -3,7 +3,7 @@
 from pico2d import get_time,clamp, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_SPACE, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN
 
 import game_framework
-from sword import Sword
+from sword import Sword, Swordline
 import game_world
 
 # 키 입력이 왔을때 각각 따로 키를 계산하지 않고 이미 한번 donw 눌림이 인식된 키는 up이 들어올떄까지 True로 인식시킨다.
@@ -192,4 +192,7 @@ class Boy:
         if self.item == 'sword':
             sword = Sword(self)
             game_world.add_object(sword)
+
+            sword_line = Swordline(self)
+            game_world.add_object(sword_line)
         pass
