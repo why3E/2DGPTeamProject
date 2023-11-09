@@ -5,8 +5,10 @@ import item_mode
 import title_mode
 from background import Background
 from boy import Boy
-from sword import Sword
+from atk import Sword
 import game_framework
+from monster import Zombie
+
 
 # Game object class here
 
@@ -36,6 +38,8 @@ def init():
 
     boy.Sword_s()
 
+    zombie = Zombie()
+    game_world.add_object(zombie, 1)
 def update():
     game_world.update()
 
@@ -51,9 +55,7 @@ def finish():
     pass
 
 def pause():
-    boy.wait_time = 10000000000000000000000000000.0
     pass
 
 def resume():
-    boy.wait_time = get_time()
     pass
