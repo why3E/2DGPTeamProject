@@ -4,10 +4,10 @@ import game_world
 import item_mode
 import title_mode
 from background import Background
-from boy import Boy
+from main_character import Main_Character
 from atk import Sword
 import game_framework
-from monster import Zombie
+from monster import Ghost
 
 
 # Game object class here
@@ -22,27 +22,27 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_i:
             game_framework.push_mode(item_mode)
         else:
-            boy.handle_event(event)
+            main_character.handle_event(event)
 
 
 
 def init():
     global background
-    global boy
+    global main_character
 
-    boy = Boy()
-    game_world.add_object(boy, 1)
+    main_character = Main_Character()
+    game_world.add_object(main_character, 1)
 
-    background = Background(boy)
+    background = Background(main_character)
     game_world.add_object(background, 0)
 
-    boy.Sword_s()
+    main_character.Sword_s()
 
-    zombie = Zombie()
-    game_world.add_object(zombie, 1)
+    ghost = Ghost(main_character)
+    game_world.add_object(ghost, 1)
+
 def update():
     game_world.update()
-
 
 def draw():
     clear_canvas()
