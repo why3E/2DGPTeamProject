@@ -1,3 +1,6 @@
+import random
+import time
+
 from pico2d import *
 
 import game_framework
@@ -72,10 +75,11 @@ class Swordline:
     def draw(self):
         if int(self.frame) < 3 and self.count == 0:
             if (self.main_character.face_dir == 1):
-                Swordline.images['sword'][int(self.frame)].draw(self.x + self.size/2, self.y - self.pos,
+                Swordline.images['sword'][int(self.frame)].draw(self.x + self.size / 2, self.y - self.pos,
                                                                 self.size, self.size)
             elif (self.main_character.face_dir == -1):
-                Swordline.images['sword'][int(self.frame)].composite_draw(0, 'h', self.x - self.size/2, self.y - self.pos,
+                Swordline.images['sword'][int(self.frame)].composite_draw(0, 'h', self.x - self.size / 2,
+                                                                          self.y - self.pos,
                                                                           self.size, self.size)
             draw_rectangle(*self.get_bb())
 
@@ -107,10 +111,12 @@ class Magic:
     def __init__(self, main_character):
         self.main_character = main_character
         self.level = 1
-        magic_line = Magicline(main_character,self.level+1)
+        magic_line = Magicline(main_character, self.level + 1)
         game_world.add_object(magic_line)
 
+
 animation_names_two = ['cir']
+
 
 class Magicline:
     images = None
@@ -121,7 +127,7 @@ class Magicline:
         self.angular_velocity = 180  # 180도/초로 설정
         self.magic_circles = []  # 원에 대한 정보를 저장할 리스트
         self.count = 2
-        self.TIME_PER_ACTION = 0.5 / self.main_character.atk_speed
+        self.TIME_PER_ACTION = 0.5
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
         self.FRAMES_PER_ACTION = 4.0
 
@@ -146,10 +152,9 @@ class Magicline:
             draw_x = self.main_character.x + circle['radius'] * math.cos(math.radians(circle['angle']))
             draw_y = self.main_character.y + circle['radius'] * math.sin(math.radians(circle['angle']))
 
-            if self.main_character.face_dir == 1:
-                Magicline.images['cir'][int(self.count)].draw(draw_x, draw_y - 10, circle['radius'], circle['radius'])
-            else:
-                Magicline.images['cir'][int(self.count)].composite_draw(0, 'h', draw_x, draw_y - 10, circle['radius'], circle['radius'])
+            Magicline.images['cir'][int(self.count)].draw(draw_x, draw_y - 10, circle['radius'], circle['radius'])
+
+            draw_rectangle(*self.get_bb(circle))
 
     def update(self):
         self.count = (self.count + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 4
@@ -159,3 +164,83 @@ class Magicline:
 
         if int(self.count) == 3:
             self.count = 0
+
+    def get_bb(self, circle):
+        circle_x = self.main_character.x + circle['radius'] * math.cos(math.radians(circle['angle']))
+        circle_y = self.main_character.y + circle['radius'] * math.sin(math.radians(circle['angle']))
+
+        min_x = circle_x - circle['radius'] / 2
+        min_y = circle_y - circle['radius'] / 2 - 10
+        max_x = circle_x + circle['radius'] / 2
+        max_y = circle_y + circle['radius'] / 2 - 10
+
+        return min_x, min_y, max_x, max_y
+
+
+class Bow:
+    def __init__(self, main_character):
+        self.main_character = main_character
+        self.last_collision_time = time.time()
+        self.invulnerable_time = 2.0  # 예시로 2초로 설정
+
+    def update(self):
+        current_time = time.time()
+
+        if current_time - self.last_collision_time > self.invulnerable_time:
+            self.last_collision_time = current_time
+            arrow = Arrow(self.main_character)
+            game_world.add_object(arrow)
+            game_world.add_collision_pair('atk:monster', None, arrow)
+
+    def draw(self):
+        pass
+
+
+animation_names_three = ['arrow']
+
+
+class Arrow:
+    images = None
+
+    def __init__(self, main_character):
+        self.x, self.y = main_character.x, main_character.y
+        self.main_character = main_character
+        self.angle = math.radians(random.randint(0, 360))  # 현재 캐릭터의 각도를 화살의 시작 각도로 설정
+        self.size = 10
+        self.TIME_PER_ACTION = 0.5
+        self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
+        self.FRAMES_PER_ACTION = 3.0
+
+        self.PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
+        self.RUN_SPEED_KMPH = 0.3  # Km / Hour
+        self.RUN_SPEED_MPM = (self.RUN_SPEED_KMPH * 1000.0 / 60.0)
+        self.RUN_SPEED_MPS = (self.RUN_SPEED_MPM / 60.0)
+        self.RUN_SPEED_PPS = (self.RUN_SPEED_MPS * self.PIXEL_PER_METER)
+
+        if Arrow.images is None:
+            Arrow.images = {}
+            for name in animation_names_three:
+                Arrow.images[name] = [load_image("source/" + name + " (%d)" % i + ".png") for i in range(1, 4)]
+        self.frame = random.randint(0,2)
+
+    def draw(self):
+        self.images['arrow'][int(self.frame)].clip_composite_draw(0, 0, 96, 41, self.angle, '', self.x, self.y, 48, 20)
+        draw_rectangle(*self.get_bb())
+    def update(self):
+        self.x += self.RUN_SPEED_PPS * math.cos(self.angle)
+        self.y += self.RUN_SPEED_PPS * math.sin(self.angle)
+
+        self.frame = (self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 3
+
+        # 화살이 일정 거리 이상 날아가면 제거
+        if self.x > 800 or self.x < 0 or self.y < 0 or self.y > 800:
+            print('화살 삭제')
+            game_world.remove_object(self)
+
+    def get_bb(self):
+        return self.x-self.size, self.y - self.size, self.x + self.size, self.y + self.size
+
+    def handle_collision(self, group, other):
+        if group == 'atk:monster':
+            game_world.remove_object(self)
+        pass

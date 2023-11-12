@@ -85,6 +85,12 @@ class Ghost:
         if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
             self.last_collision_time = current_time
             self.hp -= 5
+        elif group == 'monster:monster':
+            print('몬스터 곂침')
+            self.x += (self.x - other.x) * 0.5
+            self.y += (self.y - other.y) * 0.5
+            pass
+
 
 
 class Slime:
@@ -153,6 +159,11 @@ class Slime:
         if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
             self.last_collision_time = current_time
             self.hp -= 5
+        elif group == 'monster:monster':
+            self.x += (self.x - other.x) * 0.5
+            self.y += (self.y - other.y) * 0.5
+            pass
+
 
 class Skeleton:
     image = None
@@ -220,6 +231,10 @@ class Skeleton:
         if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
             self.last_collision_time = current_time
             self.hp -= 5
+        elif group == 'monster:monster':
+            self.x += (self.x - other.x) * 0.5
+            self.y += (self.y - other.y) * 0.5
+            pass
 
 # 피격판정을 받았을떄 풍선을 만든다(스킬 3개니까 각기 다른 풍선 3개) 하고 만약 해당하는 피격 종류를 받으면 풍선을 터트리고
 # 시간을 잰 다음 다시 부풀어 오르게 하자)

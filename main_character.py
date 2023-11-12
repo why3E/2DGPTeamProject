@@ -1,11 +1,10 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
-from pico2d import get_time, clamp, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_SPACE, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, \
+from pico2d import get_time, clamp, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, \
     SDLK_DOWN, draw_rectangle
 
 import game_framework
-import title_mode
-from atk import Sword, Swordline, Magic, Magicline
+from atk import Sword, Swordline, Magic, Bow
 import game_world
 
 # 키 입력이 왔을때 각각 따로 키를 계산하지 않고 이미 한번 donw 눌림이 인식된 키는 up이 들어올떄까지 True로 인식시킨다.
@@ -16,10 +15,7 @@ RUN_SPEED_KMPH = 20.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
-# fill here
 
-# Boy Action Speed
-# fill here
 TIME_PER_ACTION = 1.0
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
@@ -201,7 +197,7 @@ class Main_Character:
         self.hp_image = load_image('source/HP_life.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-        self.item = ['sword', 'magic']
+        self.item = ['sword', 'magic','bow']
         # 캐릭터 패시브
         self.hp = 50
         self.hp_max = 50
@@ -238,10 +234,15 @@ class Main_Character:
             sword_line = Swordline(self)
             game_world.add_object(sword_line, 1)
             game_world.add_collision_pair('atk:monster', None, sword_line)
-
         pass
 
     def Magic_s(self):
         if 'magic' in self.item:
             magic = Magic(self)
+        pass
+
+    def Bow_s(self):
+        if 'bow' in self.item:
+            bow = Bow(self)
+            game_world.add_object(bow, 1)
         pass

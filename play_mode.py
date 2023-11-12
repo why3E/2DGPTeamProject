@@ -40,6 +40,7 @@ def init():
 
     main_character.Sword_s()
     main_character.Magic_s()
+    main_character.Bow_s()
 
 def update():
     global start_time
@@ -65,6 +66,7 @@ def update():
         game_world.add_object(slime, 1)
         game_world.add_collision_pair('main_character:monster', slime, None)
         game_world.add_collision_pair('atk:monster', slime, None)
+
 
         skeleton = Skeleton(main_character)
         game_world.add_object(skeleton, 1)
