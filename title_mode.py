@@ -2,6 +2,7 @@ from pico2d import get_events, load_image, clear_canvas, update_canvas, get_time
 from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE
 
 import game_framework
+import game_world
 import play_mode
 
 
@@ -21,7 +22,7 @@ def update():
 
 def draw():
     clear_canvas()
-    image.draw(400, 300)
+    image.draw(400, 400)
     update_canvas()
     pass
 

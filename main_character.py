@@ -1,9 +1,10 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
 from pico2d import get_time, clamp, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_SPACE, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, \
-    SDLK_DOWN
+    SDLK_DOWN, draw_rectangle
 
 import game_framework
+import title_mode
 from atk import Sword, Swordline, Magic, Magicline
 import game_world
 
@@ -85,8 +86,6 @@ class Idle:
 
     @staticmethod
     def exit(main_character, e):
-
-        print('Idle exit')
         pass
 
     @staticmethod
@@ -99,9 +98,13 @@ class Idle:
             main_character.image.clip_draw(0, 0, 32, 64, main_character.x, main_character.y)
         elif (main_character.face_dir == -1):
             main_character.image.clip_composite_draw(0, 0, 32, 64, 0, 'h', main_character.x, main_character.y, 32, 64)
-        main_character.hp_bar_image.clip_draw(0, 0, 46, 12, main_character.x, main_character.y-50,main_character.hp_max+6, 12)
-        main_character.hp_image.clip_draw(0, 0, 30, 6, main_character.x +(main_character.hp-main_character.hp_max)/2, main_character.y - 50, main_character.hp,
+        main_character.hp_bar_image.clip_draw(0, 0, 46, 12, main_character.x, main_character.y - 50,
+                                              main_character.hp_max + 6, 12)
+        main_character.hp_image.clip_draw(0, 0, 30, 6,
+                                          main_character.x + (main_character.hp - main_character.hp_max) / 2,
+                                          main_character.y - 50, main_character.hp,
                                           6)
+
 
 class Run:
     @staticmethod
@@ -121,27 +124,34 @@ class Run:
 
     @staticmethod
     def exit(main_character, e):
-        print('Run exit')
         pass
 
     @staticmethod
     def do(main_character):
-        main_character.frame = (main_character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        main_character.frame = (
+                                           main_character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         main_character.x += main_character.dir * RUN_SPEED_PPS * game_framework.frame_time
         main_character.x = clamp(25, main_character.x, 800 - 25)
         main_character.y += main_character.dir2 * RUN_SPEED_PPS * game_framework.frame_time
-        main_character.y = clamp(30, main_character.y, 600)
+        main_character.y = clamp(30, main_character.y, 800 - 30)
         pass
 
     @staticmethod
     def draw(main_character):
         if (main_character.face_dir == 1):
-            main_character.image.clip_draw(int(main_character.frame) * 32, 0, 32, 64, main_character.x, main_character.y)
+            main_character.image.clip_draw(int(main_character.frame) * 32, 0, 32, 64, main_character.x,
+                                           main_character.y)
         elif (main_character.face_dir == -1):
-            main_character.image.clip_composite_draw(int(main_character.frame) * 32, 0, 32, 64, 0, 'h', main_character.x, main_character.y, 32, 64)
-        main_character.hp_bar_image.clip_draw(0, 0, 46, 12, main_character.x, main_character.y-50,main_character.hp_max+6, 12)
-        main_character.hp_image.clip_draw(0, 0, 30, 6, main_character.x + (main_character.hp-main_character.hp_max)/2 , main_character.y - 50, main_character.hp,
-                                              6)
+            main_character.image.clip_composite_draw(int(main_character.frame) * 32, 0, 32, 64, 0, 'h',
+                                                     main_character.x, main_character.y, 32, 64)
+        main_character.hp_bar_image.clip_draw(0, 0, 46, 12, main_character.x, main_character.y - 50,
+                                              main_character.hp_max + 6, 12)
+        main_character.hp_image.clip_draw(0, 0, 30, 6,
+                                          main_character.x + (main_character.hp - main_character.hp_max) / 2,
+                                          main_character.y - 50, main_character.hp,
+                                          6)
+
+
 class StateMachine:
     def __init__(self, main_character):
         self.main_character = main_character
@@ -172,18 +182,19 @@ class StateMachine:
 
 class Main_Character:
     def __init__(self):
-        self.x, self.y = 400, 300
+        self.x, self.y = 400, 400
         self.frame = 0
-        #캐릭터의 이동 방향 확인
+        self.size = 10
+        # 캐릭터의 이동 방향 확인
         self.right_move = 0
         self.left_move = 0
         self.up_move = 0
         self.down_move = 0
-        #dir은 x이동 dir2는 y 이동
+        # dir은 x이동 dir2는 y 이동
         self.dir = 0
         self.dir2 = 0
         self.move_check = False
-        #얼굴 보는 방향
+        # 얼굴 보는 방향
         self.face_dir = 1
         self.image = load_image('character_move.png')
         self.hp_bar_image = load_image('source/HP_bar.png')
@@ -191,24 +202,33 @@ class Main_Character:
         self.state_machine = StateMachine(self)
         self.state_machine.start()
         self.item = ['sword', 'magic']
-        #캐릭터 패시브
-        self.hp = 10
+        # 캐릭터 패시브
+        self.hp = 50
         self.hp_max = 50
         self.atk_speed = 1.0
         self.level = 1
-        #경험치 최대량은 level*100 이런식으로 구상
-        self.level_gage = 0 # 경험치를 채운 정도
+        # 경험치 최대량은 level*100 이런식으로 구상
+        self.level_gage = 0  # 경험치를 채운 정도
         self.damage = 10
-
 
     def update(self):
         self.state_machine.update()
-
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
     def draw(self):
         self.state_machine.draw()
+        draw_rectangle(*self.get_bb())
+
+    # fill here
+    def get_bb(self):
+        return self.x - self.size, self.y - self.size * 4, self.x + self.size, self.y + self.size - 5
+
+    def handle_collision(self, group, other):
+        if group == 'main_character:monster':
+            self.hp -= 1
+            pass
+
 
     def Sword_s(self):
         if 'sword' in self.item:
@@ -216,14 +236,12 @@ class Main_Character:
             game_world.add_object(sword)
 
             sword_line = Swordline(self)
-            game_world.add_object(sword_line)
+            game_world.add_object(sword_line, 1)
+            game_world.add_collision_pair('atk:monster', None, sword_line)
+
         pass
 
     def Magic_s(self):
         if 'magic' in self.item:
             magic = Magic(self)
-            game_world.add_object(magic)
-
-            magic_line = Magicline(self)
-            game_world.add_object(magic_line)
         pass
