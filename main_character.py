@@ -4,7 +4,7 @@ from pico2d import get_time, clamp, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_SPA
     SDLK_DOWN
 
 import game_framework
-from atk import Sword, Swordline
+from atk import Sword, Swordline, Magic, Magicline
 import game_world
 
 # 키 입력이 왔을때 각각 따로 키를 계산하지 않고 이미 한번 donw 눌림이 인식된 키는 up이 들어올떄까지 True로 인식시킨다.
@@ -190,7 +190,7 @@ class Main_Character:
         self.hp_image = load_image('source/HP_life.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-        self.item = ['sword']
+        self.item = ['sword', 'magic']
         #캐릭터 패시브
         self.hp = 10
         self.hp_max = 50
@@ -217,4 +217,13 @@ class Main_Character:
 
             sword_line = Swordline(self)
             game_world.add_object(sword_line)
+        pass
+
+    def Magic_s(self):
+        if 'magic' in self.item:
+            magic = Magic(self)
+            game_world.add_object(magic)
+
+            magic_line = Magicline(self)
+            game_world.add_object(magic_line)
         pass
