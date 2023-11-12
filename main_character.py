@@ -10,12 +10,6 @@ import game_world
 # 키 입력이 왔을때 각각 따로 키를 계산하지 않고 이미 한번 donw 눌림이 인식된 키는 up이 들어올떄까지 True로 인식시킨다.
 # 상하, 좌우 나눌필요는 없고 Run에서 이동값을 계산할때만 따로 반영하면 됨
 
-PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
-RUN_SPEED_KMPH = 20.0  # Km / Hour
-RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
-RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
-RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
-
 TIME_PER_ACTION = 1.0
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
@@ -124,11 +118,10 @@ class Run:
 
     @staticmethod
     def do(main_character):
-        main_character.frame = (
-                                           main_character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-        main_character.x += main_character.dir * RUN_SPEED_PPS * game_framework.frame_time
+        main_character.frame = (main_character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        main_character.x += main_character.dir * main_character.RUN_SPEED_PPS * game_framework.frame_time
         main_character.x = clamp(25, main_character.x, 800 - 25)
-        main_character.y += main_character.dir2 * RUN_SPEED_PPS * game_framework.frame_time
+        main_character.y += main_character.dir2 * main_character.RUN_SPEED_PPS * game_framework.frame_time
         main_character.y = clamp(30, main_character.y, 800 - 30)
         pass
 
@@ -202,11 +195,17 @@ class Main_Character:
         self.hp = 50
         self.hp_max = 50
         self.atk_speed = 1.0
+        self.move_speed = 1.0
         self.level = 1
         # 경험치 최대량은 level*100 이런식으로 구상
         self.level_gage = 0  # 경험치를 채운 정도
         self.damage = 10
 
+        self.PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
+        self.RUN_SPEED_KMPH = 20.0 * self.move_speed  # Km / Hour
+        self.RUN_SPEED_MPM = (self.RUN_SPEED_KMPH * 1000.0 / 60.0)
+        self.RUN_SPEED_MPS = (self.RUN_SPEED_MPM / 60.0)
+        self.RUN_SPEED_PPS = (self.RUN_SPEED_MPS * self.PIXEL_PER_METER)
     def update(self):
         self.state_machine.update()
     def handle_event(self, event):
