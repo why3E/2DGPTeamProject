@@ -107,14 +107,15 @@ class Magic:
     def __init__(self, main_character):
         self.main_character = main_character
         self.level = 1
-        self.magic_line = Magicline(main_character)
+        magic_line = Magicline(main_character,self.level+1)
+        game_world.add_object(magic_line)
 
 animation_names_two = ['cir']
 
 class Magicline:
     images = None
 
-    def __init__(self, main_character):
+    def __init__(self, main_character, num_circles):
         self.main_character = main_character
         self.radius = 60
         self.angular_velocity = 180  # 180도/초로 설정
@@ -137,20 +138,24 @@ class Magicline:
             self.add_circle(angle=i * angle_interval)
 
     def add_circle(self, angle=0):
-        new_circle = MagicCircle(self.main_character, angle)
+        new_circle = {'angle': angle, 'radius': self.radius}
         self.magic_circles.append(new_circle)
-        game_world.add_collision_pair('atk:monster', self, new_circle)
 
     def draw(self):
         for circle in self.magic_circles:
-            circle.draw()
-            draw_rectangle(*circle.get_bb())
+            draw_x = self.main_character.x + circle['radius'] * math.cos(math.radians(circle['angle']))
+            draw_y = self.main_character.y + circle['radius'] * math.sin(math.radians(circle['angle']))
+
+            if self.main_character.face_dir == 1:
+                Magicline.images['cir'][int(self.count)].draw(draw_x, draw_y - 10, circle['radius'], circle['radius'])
+            else:
+                Magicline.images['cir'][int(self.count)].composite_draw(0, 'h', draw_x, draw_y - 10, circle['radius'], circle['radius'])
 
     def update(self):
-        for circle in self.magic_circles:
-            circle.angle = (circle.angle + self.angular_velocity * game_framework.frame_time) % 360
-
         self.count = (self.count + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 4
+
+        for circle in self.magic_circles:
+            circle['angle'] = (circle['angle'] + self.angular_velocity * game_framework.frame_time) % 360
 
         if int(self.count) == 3:
             self.count = 0

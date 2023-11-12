@@ -28,16 +28,26 @@ class Ghost:
             Ghost.image =load_image('source/ghost_AT.png')
 
     def __init__(self, main_character):
-        self.x, self.y = main_character.x + random.randint(200, 300), main_character.y + random.randint(200, 300)
         self.main_character = main_character
+        self.radius = 400
+        self.radians = random.randint(0, 360)
+        self.x = self.main_character.x + self.radius * math.cos(math.radians(self.radians))
+        self.y = self.main_character.y + self.radius * math.sin(math.radians(self.radians))
         self.load_images()
         self.frame = random.randint(0, 4)
         self.dir = random.choice([-1,1])
         self.dir2 = random.choice([-1,1])
-        self.size = 32
+        self.size = 16
+        self.hp = 10
+        self.invulnerable_time = 1.0  # 무적 상태 지속 시간
+        self.last_collision_time = 0.0
 
 
     def update(self):
+
+        if self.hp <= 0:
+            game_world.remove_object(self)
+
         self.frame = (self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
 
         self.dir = self.main_character.x - self.x
@@ -64,6 +74,17 @@ class Ghost:
             self.image.clip_composite_draw(int(self.frame) * 32, 0, 32, 32, 0, 'h', self.x, self.y, 32, 32)
         else:
             self.image.clip_draw(int(self.frame) * 32, 0, 32, 32, self.x, self.y,32,32)
+        draw_rectangle(*self.get_bb())
+
+    # fill here
+    def get_bb(self):
+        return self.x - self.size, self.y - self.size, self.x + self.size, self.y + self.size
+
+    def handle_collision(self, group, other):
+        current_time = get_time()
+        if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
+            self.last_collision_time = current_time
+            self.hp -= 5
 
 
 class Slime:
@@ -74,16 +95,26 @@ class Slime:
             Slime.image =load_image('source/slime_2.png')
 
     def __init__(self, main_character):
-        self.x, self.y = main_character.x + random.randint(-300, -200), main_character.y + random.randint(-300, -200)
         self.main_character = main_character
+        self.radius = 400
+        self.radians = random.randint(0, 360)
+        self.x = self.main_character.x + self.radius * math.cos(math.radians(self.radians))
+        self.y = self.main_character.y + self.radius * math.sin(math.radians(self.radians))
         self.load_images()
         self.frame = random.randint(0, 7)
         self.dir = random.choice([-1,1])
         self.dir2 = random.choice([-1,1])
-        self.size = 32
+        self.size = 16
+        self.hp = 10
+        self.invulnerable_time = 1.0  # 무적 상태 지속 시간
+        self.last_collision_time = 0.0
 
 
     def update(self):
+
+        if self.hp <= 0:
+            game_world.remove_object(self)
+
         self.frame = (self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
 
         self.dir = self.main_character.x - self.x
@@ -110,7 +141,18 @@ class Slime:
             self.image.clip_composite_draw(int(self.frame) * 28, 0, 28, 25, 0, 'h', self.x, self.y, 32, 32)
         else:
             self.image.clip_draw(int(self.frame) * 28, 0, 28, 25, self.x, self.y,32,32)
+        draw_rectangle(*self.get_bb())
 
+    # fill here
+    def get_bb(self):
+        return self.x - self.size, self.y - self.size, self.x + self.size, self.y + self.size
+
+
+    def handle_collision(self, group, other):
+        current_time = get_time()
+        if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
+            self.last_collision_time = current_time
+            self.hp -= 5
 
 class Skeleton:
     image = None
@@ -120,16 +162,26 @@ class Skeleton:
             Skeleton.image =load_image('source/skeleton.png')
 
     def __init__(self, main_character):
-        self.x, self.y = main_character.x + random.randint(200, 300), main_character.y + random.randint(-300, -200)
+        self.hp = 10
         self.main_character = main_character
+        self.radius = 400
+        self.radians = random.randint(0, 360)
+        self.x = self.main_character.x + self.radius * math.cos(math.radians(self.radians))
+        self.y = self.main_character.y + self.radius * math.sin(math.radians(self.radians))
         self.load_images()
         self.frame = random.randint(0, 4)
         self.dir = random.choice([-1,1])
         self.dir2 = random.choice([-1,1])
-        self.size = 32
+        self.size = 16
+        self.invulnerable_time = 1.0  # 무적 상태 지속 시간
+        self.last_collision_time = 0.0
 
 
     def update(self):
+
+        if self.hp <= 0:
+            game_world.remove_object(self)
+
         self.frame = (self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
 
         self.dir = self.main_character.x - self.x
@@ -156,5 +208,18 @@ class Skeleton:
             self.image.clip_composite_draw(int(self.frame) * 35, 0, 35, 36, 0, 'h', self.x, self.y, 32, 32)
         else:
             self.image.clip_draw(int(self.frame) * 35, 0, 35, 36, self.x, self.y, 32,32)
+        draw_rectangle(*self.get_bb())
+
+    # fill here
+    def get_bb(self):
+        return self.x - self.size, self.y - self.size, self.x + self.size, self.y + self.size
+
+
+    def handle_collision(self, group, other):
+        current_time = get_time()
+        if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
+            self.last_collision_time = current_time
+            self.hp -= 5
+
 # 피격판정을 받았을떄 풍선을 만든다(스킬 3개니까 각기 다른 풍선 3개) 하고 만약 해당하는 피격 종류를 받으면 풍선을 터트리고
 # 시간을 잰 다음 다시 부풀어 오르게 하자)
