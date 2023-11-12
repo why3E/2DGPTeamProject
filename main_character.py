@@ -118,7 +118,8 @@ class Run:
 
     @staticmethod
     def do(main_character):
-        main_character.frame = (main_character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        main_character.frame = (
+                                           main_character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         main_character.x += main_character.dir * main_character.RUN_SPEED_PPS * game_framework.frame_time
         main_character.x = clamp(25, main_character.x, 800 - 25)
         main_character.y += main_character.dir2 * main_character.RUN_SPEED_PPS * game_framework.frame_time
@@ -188,9 +189,11 @@ class Main_Character:
         self.image = load_image('character_move.png')
         self.hp_bar_image = load_image('source/HP_bar.png')
         self.hp_image = load_image('source/HP_life.png')
+        self.exp_bar_image = load_image('source/EXP_bar.png')
+        self.exp_image = load_image('source/EXP_exp.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-        self.item = ['sword', 'magic','bow']
+        self.item = ['sword', 'magic', 'bow']
         # 캐릭터 패시브
         self.hp = 50
         self.hp_max = 50
@@ -198,7 +201,7 @@ class Main_Character:
         self.move_speed = 1.0
         self.level = 1
         # 경험치 최대량은 level*100 이런식으로 구상
-        self.level_gage = 0  # 경험치를 채운 정도
+        self.Exp = 10  # 경험치를 채운 정도
         self.damage = 10
 
         self.PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
@@ -206,14 +209,20 @@ class Main_Character:
         self.RUN_SPEED_MPM = (self.RUN_SPEED_KMPH * 1000.0 / 60.0)
         self.RUN_SPEED_MPS = (self.RUN_SPEED_MPM / 60.0)
         self.RUN_SPEED_PPS = (self.RUN_SPEED_MPS * self.PIXEL_PER_METER)
+
     def update(self):
+        if self.Exp == 100:
+            self.level += 1
+            self.Exp = 0
         self.state_machine.update()
+
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
     def draw(self):
         self.state_machine.draw()
-        draw_rectangle(*self.get_bb())
+        self.exp_bar_image.clip_draw(0, 0, 49, 6, 400, 800-25,400+15, 50)
+        self.exp_image.clip_draw(0, 0, 49, 6, 400+(self.Exp-100)*2, 800 - 25, self.Exp*4, 32)
 
     # fill here
     def get_bb(self):
@@ -223,7 +232,6 @@ class Main_Character:
         if group == 'main_character:monster':
             self.hp -= 1
             pass
-
 
     def Sword_s(self):
         if 'sword' in self.item:

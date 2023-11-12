@@ -181,7 +181,7 @@ class Bow:
     def __init__(self, main_character):
         self.main_character = main_character
         self.last_collision_time = time.time()
-        self.invulnerable_time = 2.0  # 예시로 2초로 설정
+        self.invulnerable_time = 0.50  # 예시로 2초로 설정
 
     def update(self):
         current_time = time.time()
@@ -207,6 +207,7 @@ class Arrow:
         self.main_character = main_character
         self.angle = math.radians(random.randint(0, 360))  # 현재 캐릭터의 각도를 화살의 시작 각도로 설정
         self.size = 10
+
         self.TIME_PER_ACTION = 0.5
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
         self.FRAMES_PER_ACTION = 3.0

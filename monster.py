@@ -5,6 +5,7 @@ import game_framework
 from pico2d import *
 
 import game_world
+import main_character
 
 # zombie Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
@@ -47,7 +48,7 @@ class Ghost:
 
         if self.hp <= 0:
             game_world.remove_object(self)
-
+            self.main_character.Exp += 10
         self.frame = (self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
 
         self.dir = self.main_character.x - self.x
@@ -85,11 +86,6 @@ class Ghost:
         if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
             self.last_collision_time = current_time
             self.hp -= 5
-        elif group == 'monster:monster':
-            print('몬스터 곂침')
-            self.x += (self.x - other.x) * 0.5
-            self.y += (self.y - other.y) * 0.5
-            pass
 
 
 
@@ -120,6 +116,7 @@ class Slime:
 
         if self.hp <= 0:
             game_world.remove_object(self)
+            self.main_character.Exp += 10
 
         self.frame = (self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
 
@@ -159,10 +156,6 @@ class Slime:
         if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
             self.last_collision_time = current_time
             self.hp -= 5
-        elif group == 'monster:monster':
-            self.x += (self.x - other.x) * 0.5
-            self.y += (self.y - other.y) * 0.5
-            pass
 
 
 class Skeleton:
@@ -192,6 +185,7 @@ class Skeleton:
 
         if self.hp <= 0:
             game_world.remove_object(self)
+            self.main_character.Exp += 10
 
         self.frame = (self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
 
@@ -231,10 +225,6 @@ class Skeleton:
         if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
             self.last_collision_time = current_time
             self.hp -= 5
-        elif group == 'monster:monster':
-            self.x += (self.x - other.x) * 0.5
-            self.y += (self.y - other.y) * 0.5
-            pass
 
 # 피격판정을 받았을떄 풍선을 만든다(스킬 3개니까 각기 다른 풍선 3개) 하고 만약 해당하는 피격 종류를 받으면 풍선을 터트리고
 # 시간을 잰 다음 다시 부풀어 오르게 하자)
