@@ -40,9 +40,10 @@ class Sword:
             Sword.image1.clip_composite_draw(0, 0, 32, 32, 0, 'h', self.x + self.velocity, self.y - 10, 32, 32)
 
     def update(self):
-        self.x, self.y, self.velocity = self.main_character.x, self.main_character.y, self.main_character.face_dir * 20
-        if self.level in self.image_dict:
-            Sword.image = self.image_dict[self.level]
+        if self.main_character.wait_time_play == 0:
+            self.x, self.y, self.velocity = self.main_character.x, self.main_character.y, self.main_character.face_dir * 20
+            if self.level in self.image_dict:
+                Sword.image = self.image_dict[self.level]
 
 
 # zombie Action Speed
@@ -84,18 +85,19 @@ class Swordline:
             draw_rectangle(*self.get_bb())
 
     def update(self):
-        self.x, self.y, self.velocity = self.main_character.x, self.main_character.y, self.main_character.face_dir * 20
-        self.frame = (
-                             self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % self.FRAMES_PER_ACTION
+        if self.main_character.wait_time_play == 0:
+            self.x, self.y, self.velocity = self.main_character.x, self.main_character.y, self.main_character.face_dir * 20
+            self.frame = (
+                                 self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % self.FRAMES_PER_ACTION
 
-        if int(self.frame) == 3 and self.count == 3:
-            self.count = 0
-            self.frame = 0
-            self.size = 80
-        if int(self.frame) == 3:
-            self.count += 1
-            self.frame = 0
-            self.size = 0
+            if int(self.frame) == 3 and self.count == 3:
+                self.count = 0
+                self.frame = 0
+                self.size = 80
+            if int(self.frame) == 3:
+                self.count += 1
+                self.frame = 0
+                self.size = 0
 
     def get_bb(self):
         if self.main_character.face_dir == 1:
@@ -157,13 +159,14 @@ class Magicline:
             draw_rectangle(*self.get_bb(circle))
 
     def update(self):
-        self.count = (self.count + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 4
+        if self.main_character.wait_time_play == 0:
+            self.count = (self.count + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 4
 
-        for circle in self.magic_circles:
-            circle['angle'] = (circle['angle'] + self.angular_velocity * game_framework.frame_time) % 360
+            for circle in self.magic_circles:
+                circle['angle'] = (circle['angle'] + self.angular_velocity * game_framework.frame_time) % 360
 
-        if int(self.count) == 3:
-            self.count = 0
+            if int(self.count) == 3:
+                self.count = 0
 
     def get_bb(self, circle):
         circle_x = self.main_character.x + circle['radius'] * math.cos(math.radians(circle['angle']))
@@ -184,13 +187,15 @@ class Bow:
         self.invulnerable_time = 0.50  # 예시로 2초로 설정
 
     def update(self):
-        current_time = time.time()
+        if self.main_character.wait_time_play == 0:
 
-        if current_time - self.last_collision_time > self.invulnerable_time:
-            self.last_collision_time = current_time
-            arrow = Arrow(self.main_character)
-            game_world.add_object(arrow)
-            game_world.add_collision_pair('atk:monster', None, arrow)
+            current_time = time.time()
+
+            if current_time - self.last_collision_time > self.invulnerable_time:
+                self.last_collision_time = current_time
+                arrow = Arrow(self.main_character)
+                game_world.add_object(arrow)
+                game_world.add_collision_pair('atk:monster', None, arrow)
 
     def draw(self):
         pass
@@ -228,15 +233,16 @@ class Arrow:
         self.images['arrow'][int(self.frame)].clip_composite_draw(0, 0, 96, 41, self.angle, '', self.x, self.y, 48, 20)
         draw_rectangle(*self.get_bb())
     def update(self):
-        self.x += self.RUN_SPEED_PPS * math.cos(self.angle)
-        self.y += self.RUN_SPEED_PPS * math.sin(self.angle)
+        if self.main_character.wait_time_play == 0:
+            self.x += self.RUN_SPEED_PPS * math.cos(self.angle)
+            self.y += self.RUN_SPEED_PPS * math.sin(self.angle)
 
-        self.frame = (self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 3
+            self.frame = (self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 3
 
-        # 화살이 일정 거리 이상 날아가면 제거
-        if self.x > 800 or self.x < 0 or self.y < 0 or self.y > 800:
-            print('화살 삭제')
-            game_world.remove_object(self)
+            # 화살이 일정 거리 이상 날아가면 제거
+            if self.x > 800 or self.x < 0 or self.y < 0 or self.y > 800:
+                print('화살 삭제')
+                game_world.remove_object(self)
 
     def get_bb(self):
         return self.x-self.size, self.y - self.size, self.x + self.size, self.y + self.size

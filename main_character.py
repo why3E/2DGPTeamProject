@@ -4,6 +4,7 @@ from pico2d import get_time, clamp, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEF
     SDLK_DOWN, draw_rectangle
 
 import game_framework
+import item_mode
 from atk import Sword, Swordline, Magic, Bow
 import game_world
 
@@ -210,11 +211,23 @@ class Main_Character:
         self.RUN_SPEED_MPS = (self.RUN_SPEED_MPM / 60.0)
         self.RUN_SPEED_PPS = (self.RUN_SPEED_MPS * self.PIXEL_PER_METER)
 
+        self.wait_time_play = 0
     def update(self):
-        if self.Exp == 100:
-            self.level += 1
-            self.Exp = 0
-        self.state_machine.update()
+        if self.wait_time_play == 0:
+            if self.Exp == 100:
+                game_framework.push_mode(item_mode)
+                self.level += 1
+                self.Exp = 0
+            self.state_machine.update()
+        else:
+            self.right_move = 0
+            self.left_move = 0
+            self.up_move = 0
+            self.down_move = 0
+            # dir은 x이동 dir2는 y 이동
+            self.dir = 0
+            self.dir2 = 0
+            self.move_check = False
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))

@@ -45,29 +45,30 @@ class Ghost:
 
 
     def update(self):
+        if self.main_character.wait_time_play == 0:
 
-        if self.hp <= 0:
-            game_world.remove_object(self)
-            self.main_character.Exp += 10
-        self.frame = (self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
+            if self.hp <= 0:
+                game_world.remove_object(self)
+                self.main_character.Exp += 10
+            self.frame = (self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
 
-        self.dir = self.main_character.x - self.x
-        self.dir2 = self.main_character.y - self.y
+            self.dir = self.main_character.x - self.x
+            self.dir2 = self.main_character.y - self.y
 
-        distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
+            distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
 
-        if distance != 0:
-            self.dir /= distance
-            self.dir2 /= distance
+            if distance != 0:
+                self.dir /= distance
+                self.dir2 /= distance
 
-        if self.dir != 0 and self.dir2 != 0:
-            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time*0.5
-            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time*0.5
-        else:
-            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
-            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
+            if self.dir != 0 and self.dir2 != 0:
+                self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time*0.5
+                self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time*0.5
+            else:
+                self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
+                self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
 
-        pass
+            pass
 
 
     def draw(self):
@@ -113,30 +114,30 @@ class Slime:
 
 
     def update(self):
+        if self.main_character.wait_time_play == 0:
+            if self.hp <= 0:
+                game_world.remove_object(self)
+                self.main_character.Exp += 10
 
-        if self.hp <= 0:
-            game_world.remove_object(self)
-            self.main_character.Exp += 10
+            self.frame = (self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
 
-        self.frame = (self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
+            self.dir = self.main_character.x - self.x
+            self.dir2 = self.main_character.y - self.y
 
-        self.dir = self.main_character.x - self.x
-        self.dir2 = self.main_character.y - self.y
+            distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
 
-        distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
+            if distance != 0:
+                self.dir /= distance
+                self.dir2 /= distance
 
-        if distance != 0:
-            self.dir /= distance
-            self.dir2 /= distance
+            if self.dir != 0 and self.dir2 != 0:
+                self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time*0.5
+                self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time*0.5
+            else:
+                self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
+                self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
 
-        if self.dir != 0 and self.dir2 != 0:
-            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time*0.5
-            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time*0.5
-        else:
-            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
-            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
-
-        pass
+            pass
 
 
     def draw(self):
@@ -182,30 +183,30 @@ class Skeleton:
 
 
     def update(self):
+        if self.main_character.wait_time_play == 0:
+            if self.hp <= 0:
+                game_world.remove_object(self)
+                self.main_character.Exp += 10
 
-        if self.hp <= 0:
-            game_world.remove_object(self)
-            self.main_character.Exp += 10
+            self.frame = (self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
 
-        self.frame = (self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
+            self.dir = self.main_character.x - self.x
+            self.dir2 = self.main_character.y - self.y
 
-        self.dir = self.main_character.x - self.x
-        self.dir2 = self.main_character.y - self.y
+            distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
 
-        distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
+            if distance != 0:
+                self.dir /= distance
+                self.dir2 /= distance
 
-        if distance != 0:
-            self.dir /= distance
-            self.dir2 /= distance
+            if self.dir != 0 and self.dir2 != 0:
+                self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time*0.5
+                self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time*0.5
+            else:
+                self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
+                self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
 
-        if self.dir != 0 and self.dir2 != 0:
-            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time*0.5
-            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time*0.5
-        else:
-            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
-            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
-
-        pass
+            pass
 
 
     def draw(self):

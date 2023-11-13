@@ -9,10 +9,10 @@ from pannel import Pannel
 
 # Game object class here
 
+item = ['bow','sword','magic']
 
 def handle_events():
     events = get_events()
-
 
     for event in events:
         if event.type == SDL_QUIT:
@@ -20,15 +20,6 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             match event.key:
                 case pico2d.SDLK_ESCAPE:
-                    game_framework.pop_mode()
-                case pico2d.SDLK_0:
-                    play_mode.boy.item = None
-                    game_framework.pop_mode()
-                case pico2d.SDLK_1:
-                    play_mode.boy.item = 'Ball'
-                    game_framework.pop_mode()
-                case pico2d.SDLK_2:
-                    play_mode.boy.item = 'BigBall'
                     game_framework.pop_mode()
 
 
