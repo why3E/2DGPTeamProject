@@ -21,12 +21,13 @@ GHOST_FRAMES_PER_ACTION = 4.0
 SLIME_FRAMES_PER_ACTION = 7.0
 SKELETON_FRAMES_PER_ACTION = 4.0
 
+
 class Ghost:
     image = None
 
     def load_images(self):
         if Ghost.image == None:
-            Ghost.image =load_image('source/ghost_AT.png')
+            Ghost.image = load_image('source/ghost_AT.png')
 
     def __init__(self, main_character):
         self.main_character = main_character
@@ -36,46 +37,44 @@ class Ghost:
         self.y = self.main_character.y + self.radius * math.sin(math.radians(self.radians))
         self.load_images()
         self.frame = random.randint(0, 4)
-        self.dir = random.choice([-1,1])
-        self.dir2 = random.choice([-1,1])
+        self.dir = random.choice([-1, 1])
+        self.dir2 = random.choice([-1, 1])
         self.size = 16
         self.hp = 10
         self.invulnerable_time = 1.0  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
 
-
     def update(self):
-        if self.main_character.wait_time_play == 0:
 
-            if self.hp <= 0:
-                game_world.remove_object(self)
-                self.main_character.Exp += 10
-            self.frame = (self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
+        if self.hp <= 0:
+            game_world.remove_object(self)
+            self.main_character.Exp += 10
+        self.frame = (
+                                 self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
 
-            self.dir = self.main_character.x - self.x
-            self.dir2 = self.main_character.y - self.y
+        self.dir = self.main_character.x - self.x
+        self.dir2 = self.main_character.y - self.y
 
-            distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
+        distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
 
-            if distance != 0:
-                self.dir /= distance
-                self.dir2 /= distance
+        if distance != 0:
+            self.dir /= distance
+            self.dir2 /= distance
 
-            if self.dir != 0 and self.dir2 != 0:
-                self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time*0.5
-                self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time*0.5
-            else:
-                self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
-                self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
+        if self.dir != 0 and self.dir2 != 0:
+            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time * 0.5
+            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time * 0.5
+        else:
+            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
+            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
 
-            pass
-
+        pass
 
     def draw(self):
         if self.dir >= 0:
             self.image.clip_composite_draw(int(self.frame) * 32, 0, 32, 32, 0, 'h', self.x, self.y, 32, 32)
         else:
-            self.image.clip_draw(int(self.frame) * 32, 0, 32, 32, self.x, self.y,32,32)
+            self.image.clip_draw(int(self.frame) * 32, 0, 32, 32, self.x, self.y, 32, 32)
         draw_rectangle(*self.get_bb())
 
     # fill here
@@ -89,13 +88,12 @@ class Ghost:
             self.hp -= 5
 
 
-
 class Slime:
     image = None
 
     def load_images(self):
         if Slime.image == None:
-            Slime.image =load_image('source/slime_2.png')
+            Slime.image = load_image('source/slime_2.png')
 
     def __init__(self, main_character):
         self.main_character = main_character
@@ -105,52 +103,49 @@ class Slime:
         self.y = self.main_character.y + self.radius * math.sin(math.radians(self.radians))
         self.load_images()
         self.frame = random.randint(0, 7)
-        self.dir = random.choice([-1,1])
-        self.dir2 = random.choice([-1,1])
+        self.dir = random.choice([-1, 1])
+        self.dir2 = random.choice([-1, 1])
         self.size = 16
         self.hp = 10
         self.invulnerable_time = 1.0  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
 
-
     def update(self):
-        if self.main_character.wait_time_play == 0:
-            if self.hp <= 0:
-                game_world.remove_object(self)
-                self.main_character.Exp += 10
+        if self.hp <= 0:
+            game_world.remove_object(self)
+            self.main_character.Exp += 10
 
-            self.frame = (self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
+        self.frame = (
+                                 self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
 
-            self.dir = self.main_character.x - self.x
-            self.dir2 = self.main_character.y - self.y
+        self.dir = self.main_character.x - self.x
+        self.dir2 = self.main_character.y - self.y
 
-            distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
+        distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
 
-            if distance != 0:
-                self.dir /= distance
-                self.dir2 /= distance
+        if distance != 0:
+            self.dir /= distance
+            self.dir2 /= distance
 
-            if self.dir != 0 and self.dir2 != 0:
-                self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time*0.5
-                self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time*0.5
-            else:
-                self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
-                self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
+        if self.dir != 0 and self.dir2 != 0:
+            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time * 0.5
+            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time * 0.5
+        else:
+            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
+            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
 
-            pass
-
+        pass
 
     def draw(self):
         if self.dir >= 0:
             self.image.clip_composite_draw(int(self.frame) * 28, 0, 28, 25, 0, 'h', self.x, self.y, 32, 32)
         else:
-            self.image.clip_draw(int(self.frame) * 28, 0, 28, 25, self.x, self.y,32,32)
+            self.image.clip_draw(int(self.frame) * 28, 0, 28, 25, self.x, self.y, 32, 32)
         draw_rectangle(*self.get_bb())
 
     # fill here
     def get_bb(self):
         return self.x - self.size, self.y - self.size, self.x + self.size, self.y + self.size
-
 
     def handle_collision(self, group, other):
         current_time = get_time()
@@ -164,7 +159,7 @@ class Skeleton:
 
     def load_images(self):
         if Skeleton.image == None:
-            Skeleton.image =load_image('source/skeleton.png')
+            Skeleton.image = load_image('source/skeleton.png')
 
     def __init__(self, main_character):
         self.hp = 10
@@ -175,51 +170,48 @@ class Skeleton:
         self.y = self.main_character.y + self.radius * math.sin(math.radians(self.radians))
         self.load_images()
         self.frame = random.randint(0, 4)
-        self.dir = random.choice([-1,1])
-        self.dir2 = random.choice([-1,1])
+        self.dir = random.choice([-1, 1])
+        self.dir2 = random.choice([-1, 1])
         self.size = 16
         self.invulnerable_time = 1.0  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
 
-
     def update(self):
-        if self.main_character.wait_time_play == 0:
-            if self.hp <= 0:
-                game_world.remove_object(self)
-                self.main_character.Exp += 10
+        if self.hp <= 0:
+            game_world.remove_object(self)
+            self.main_character.Exp += 10
 
-            self.frame = (self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
+        self.frame = (
+                                 self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
 
-            self.dir = self.main_character.x - self.x
-            self.dir2 = self.main_character.y - self.y
+        self.dir = self.main_character.x - self.x
+        self.dir2 = self.main_character.y - self.y
 
-            distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
+        distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
 
-            if distance != 0:
-                self.dir /= distance
-                self.dir2 /= distance
+        if distance != 0:
+            self.dir /= distance
+            self.dir2 /= distance
 
-            if self.dir != 0 and self.dir2 != 0:
-                self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time*0.5
-                self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time*0.5
-            else:
-                self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
-                self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
+        if self.dir != 0 and self.dir2 != 0:
+            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time * 0.5
+            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time * 0.5
+        else:
+            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
+            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
 
-            pass
-
+        pass
 
     def draw(self):
         if self.dir >= 0:
             self.image.clip_composite_draw(int(self.frame) * 35, 0, 35, 36, 0, 'h', self.x, self.y, 32, 32)
         else:
-            self.image.clip_draw(int(self.frame) * 35, 0, 35, 36, self.x, self.y, 32,32)
+            self.image.clip_draw(int(self.frame) * 35, 0, 35, 36, self.x, self.y, 32, 32)
         draw_rectangle(*self.get_bb())
 
     # fill here
     def get_bb(self):
         return self.x - self.size, self.y - self.size, self.x + self.size, self.y + self.size
-
 
     def handle_collision(self, group, other):
         current_time = get_time()

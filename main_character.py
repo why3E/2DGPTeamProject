@@ -120,7 +120,7 @@ class Run:
     @staticmethod
     def do(main_character):
         main_character.frame = (
-                                           main_character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+                                       main_character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         main_character.x += main_character.dir * main_character.RUN_SPEED_PPS * game_framework.frame_time
         main_character.x = clamp(25, main_character.x, 800 - 25)
         main_character.y += main_character.dir2 * main_character.RUN_SPEED_PPS * game_framework.frame_time
@@ -211,40 +211,34 @@ class Main_Character:
         self.RUN_SPEED_MPS = (self.RUN_SPEED_MPM / 60.0)
         self.RUN_SPEED_PPS = (self.RUN_SPEED_MPS * self.PIXEL_PER_METER)
 
-        self.wait_time_play = 0
     def update(self):
-        if self.wait_time_play == 0:
-            if self.Exp == 100:
-                game_framework.push_mode(item_mode)
-                self.level += 1
-                self.Exp = 0
-            self.state_machine.update()
-        else:
-            self.right_move = 0
-            self.left_move = 0
-            self.up_move = 0
-            self.down_move = 0
-            # dir은 x이동 dir2는 y 이동
-            self.dir = 0
-            self.dir2 = 0
-            self.move_check = False
+        if self.Exp == 100:
+            game_framework.push_mode(item_mode)
+            self.level += 1
+            self.Exp = 0
+        self.state_machine.update()
+
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
+
     def draw(self):
         self.state_machine.draw()
-        self.exp_bar_image.clip_draw(0, 0, 49, 6, 400, 800-25,400+15, 50)
-        self.exp_image.clip_draw(0, 0, 49, 6, 400+(self.Exp-100)*2, 800 - 25, self.Exp*4, 32)
+        self.exp_bar_image.clip_draw(0, 0, 49, 6, 400, 800 - 25, 400 + 15, 50)
+        self.exp_image.clip_draw(0, 0, 49, 6, 400 + (self.Exp - 100) * 2, 800 - 25, self.Exp * 4, 32)
+
 
     # fill here
     def get_bb(self):
         return self.x - self.size, self.y - self.size * 4, self.x + self.size, self.y + self.size - 5
 
+
     def handle_collision(self, group, other):
         if group == 'main_character:monster':
             self.hp -= 1
             pass
+
 
     def Sword_s(self):
         if 'sword' in self.item:
@@ -256,10 +250,12 @@ class Main_Character:
             game_world.add_collision_pair('atk:monster', None, sword_line)
         pass
 
+
     def Magic_s(self):
         if 'magic' in self.item:
             magic = Magic(self)
         pass
+
 
     def Bow_s(self):
         if 'bow' in self.item:

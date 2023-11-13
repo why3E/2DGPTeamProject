@@ -24,13 +24,14 @@ def handle_events():
             main_character.handle_event(event)
 
 
-
 def init():
     global background
     global main_character
     global start_time
+    global play_check
 
-    start_time = get_time()+1
+    play_check = True
+    start_time = get_time() + 1
     main_character = Main_Character()
     game_world.add_object(main_character, 1)
     game_world.add_collision_pair('main_character:monster', None, main_character)
@@ -42,36 +43,36 @@ def init():
     main_character.Magic_s()
     main_character.Bow_s()
 
+
 def update():
     global start_time
-    if main_character.wait_time_play == 0:
-        if main_character.hp <= 0:
-            game_world.clear()
-            game_framework.change_mode(title_mode)
+    if main_character.hp <= 0:
+        game_world.clear()
+        game_framework.change_mode(title_mode)
 
-        game_world.update()
-        game_world.handle_collisions()
+    game_world.update()
+    game_world.handle_collisions()
 
-        current_time = get_time()
+    current_time = get_time()
 
-        if int((current_time - start_time) / 2) > 0:
-            start_time = current_time
+    if int((current_time - start_time) / 2) > 0:
+        start_time = current_time
 
-            ghost = Ghost(main_character)
-            game_world.add_object(ghost, 1)
-            game_world.add_collision_pair('main_character:monster', ghost, None)
-            game_world.add_collision_pair('atk:monster', ghost, None)
+        ghost = Ghost(main_character)
+        game_world.add_object(ghost, 1)
+        game_world.add_collision_pair('main_character:monster', ghost, None)
+        game_world.add_collision_pair('atk:monster', ghost, None)
 
-            slime = Slime(main_character)
-            game_world.add_object(slime, 1)
-            game_world.add_collision_pair('main_character:monster', slime, None)
-            game_world.add_collision_pair('atk:monster', slime, None)
+        slime = Slime(main_character)
+        game_world.add_object(slime, 1)
+        game_world.add_collision_pair('main_character:monster', slime, None)
+        game_world.add_collision_pair('atk:monster', slime, None)
 
+        skeleton = Skeleton(main_character)
+        game_world.add_object(skeleton, 1)
+        game_world.add_collision_pair('main_character:monster', skeleton, None)
+        game_world.add_collision_pair('atk:monster', skeleton, None)
 
-            skeleton = Skeleton(main_character)
-            game_world.add_object(skeleton, 1)
-            game_world.add_collision_pair('main_character:monster', skeleton, None)
-            game_world.add_collision_pair('atk:monster', skeleton, None)
 
 def draw():
     clear_canvas()
@@ -83,10 +84,14 @@ def finish():
     game_world.clear()
     pass
 
+
 def pause():
-    main_character.wait_time_play=1
+    global play_check
+    play_check = False
     pass
 
+
 def resume():
-    main_character.wait_time_play=0
+    global play_check
+    play_check = True
     pass
