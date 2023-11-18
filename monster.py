@@ -1,11 +1,7 @@
 import random
-import math
 import game_framework
-
 from pico2d import *
-
 import game_world
-import main_character
 
 # zombie Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
@@ -45,12 +41,7 @@ class Ghost:
         self.last_collision_time = 0.0
 
     def update(self):
-
-        if self.hp <= 0:
-            game_world.remove_object(self)
-            self.main_character.Exp += 10
-        self.frame = (
-                                 self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
+        self.frame = (self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
 
         self.dir = self.main_character.x - self.x
         self.dir2 = self.main_character.y - self.y
@@ -87,6 +78,10 @@ class Ghost:
             self.last_collision_time = current_time
             self.hp -= 5
 
+            if self.hp <= 0:
+                game_world.remove_object(self)
+                self.main_character.Exp += 10
+
 
 class Slime:
     image = None
@@ -111,12 +106,7 @@ class Slime:
         self.last_collision_time = 0.0
 
     def update(self):
-        if self.hp <= 0:
-            game_world.remove_object(self)
-            self.main_character.Exp += 10
-
-        self.frame = (
-                                 self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
+        self.frame = (self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
 
         self.dir = self.main_character.x - self.x
         self.dir2 = self.main_character.y - self.y
@@ -153,6 +143,10 @@ class Slime:
             self.last_collision_time = current_time
             self.hp -= 5
 
+            if self.hp <= 0:
+                game_world.remove_object(self)
+                self.main_character.Exp += 10
+
 
 class Skeleton:
     image = None
@@ -177,12 +171,7 @@ class Skeleton:
         self.last_collision_time = 0.0
 
     def update(self):
-        if self.hp <= 0:
-            game_world.remove_object(self)
-            self.main_character.Exp += 10
-
-        self.frame = (
-                                 self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
+        self.frame = (self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
 
         self.dir = self.main_character.x - self.x
         self.dir2 = self.main_character.y - self.y
@@ -219,5 +208,6 @@ class Skeleton:
             self.last_collision_time = current_time
             self.hp -= 5
 
-# 피격판정을 받았을떄 풍선을 만든다(스킬 3개니까 각기 다른 풍선 3개) 하고 만약 해당하는 피격 종류를 받으면 풍선을 터트리고
-# 시간을 잰 다음 다시 부풀어 오르게 하자)
+            if self.hp <= 0:
+                game_world.remove_object(self)
+                self.main_character.Exp += 10
