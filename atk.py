@@ -230,15 +230,14 @@ class Arrow:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-            self.x += self.RUN_SPEED_PPS * math.cos(self.angle)
-            self.y += self.RUN_SPEED_PPS * math.sin(self.angle)
+        self.x += self.RUN_SPEED_PPS * math.cos(self.angle)
+        self.y += self.RUN_SPEED_PPS * math.sin(self.angle)
 
-            self.frame = (self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 3
+        self.frame = (self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 3
 
-            # 화살이 일정 거리 이상 날아가면 제거
-            if self.x > 800 or self.x < 0 or self.y < 0 or self.y > 800:
-                print('화살 삭제')
-                game_world.remove_object(self)
+        # 화살이 일정 거리 이상 날아가면 제거
+        if self.x > 800 or self.x < 0 or self.y < 0 or self.y > 800:
+            game_world.remove_object(self)
 
     def get_bb(self):
         return self.x - self.size, self.y - self.size, self.x + self.size, self.y + self.size

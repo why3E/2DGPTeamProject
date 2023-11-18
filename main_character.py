@@ -239,26 +239,3 @@ class Main_Character:
             self.hp -= 1
             pass
 
-
-    def Sword_s(self):
-        if 'sword' in self.item:
-            sword = Sword(self)
-            game_world.add_object(sword)
-
-            sword_line = Swordline(self)
-            game_world.add_object(sword_line, 1)
-            game_world.add_collision_pair('atk:monster', None, sword_line)
-        pass
-
-
-    def Magic_s(self):
-        if 'magic' in self.item:
-            magic = Magic(self)
-        pass
-
-
-    def Bow_s(self):
-        if 'bow' in self.item:
-            bow = Bow(self)
-            game_world.add_object(bow, 1)
-        pass

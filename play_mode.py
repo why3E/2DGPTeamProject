@@ -3,6 +3,7 @@ from pico2d import *
 import game_world
 import item_mode
 import title_mode
+from atk import Bow, Sword, Swordline, Magic
 from background import Background
 from main_character import Main_Character
 import game_framework
@@ -39,9 +40,17 @@ def init():
     background = Background(main_character)
     game_world.add_object(background, 0)
 
-    main_character.Sword_s()
-    main_character.Magic_s()
-    main_character.Bow_s()
+    sword = Sword(main_character)
+    game_world.add_object(sword, 0)
+
+    sword_line = Swordline(main_character)
+    game_world.add_object(sword_line, 1)
+    game_world.add_collision_pair('atk:monster', None, sword_line)
+
+    bow = Bow(main_character)
+    game_world.add_object(bow, 1)
+
+    magic = Magic(main_character)
 
 
 def update():
