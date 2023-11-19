@@ -77,7 +77,7 @@ def update():
         game_world.add_collision_pair('main_character:monster', slime, None)
         game_world.add_collision_pair('atk:monster', slime, None)
 
-        skeleton = Skeleton(main_character)
+        skeleton = Skeleton()
         game_world.add_object(skeleton, 1)
         game_world.add_collision_pair('main_character:monster', skeleton, None)
         game_world.add_collision_pair('atk:monster', skeleton, None)

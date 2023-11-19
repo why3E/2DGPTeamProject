@@ -5,6 +5,7 @@ from pico2d import get_time, clamp, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEF
 
 import game_framework
 import item_mode
+import play_mode
 from atk import Sword, Swordline, Magic, Bow
 import game_world
 
@@ -212,11 +213,13 @@ class Main_Character:
         self.RUN_SPEED_PPS = (self.RUN_SPEED_MPS * self.PIXEL_PER_METER)
 
     def update(self):
-        if self.Exp == 100:
-            game_framework.push_mode(item_mode)
-            self.level += 1
-            self.Exp = 0
-        self.state_machine.update()
+
+        if play_mode.play_check == True:
+            if self.Exp == 100:
+                game_framework.push_mode(item_mode)
+                self.level += 1
+                self.Exp = 0
+            self.state_machine.update()
 
 
     def handle_event(self, event):

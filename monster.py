@@ -2,10 +2,12 @@ import random
 import game_framework
 from pico2d import *
 import game_world
+import play_mode
+from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 
 # zombie Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
-RUN_SPEED_KMPH = 10.0  # Km / Hour
+RUN_SPEED_KMPH = 7.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -39,30 +41,19 @@ class Ghost:
         self.hp = 10
         self.invulnerable_time = 1.0  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
+        self.tx, self.ty = 1000, 1000
+        self.build_behavior_tree()
 
     def update(self):
-        self.frame = (self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
 
-        self.dir = self.main_character.x - self.x
-        self.dir2 = self.main_character.y - self.y
-
-        distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
-
-        if distance != 0:
-            self.dir /= distance
-            self.dir2 /= distance
-
-        if self.dir != 0 and self.dir2 != 0:
-            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time * 0.5
-            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time * 0.5
-        else:
-            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
-            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
-
-        pass
+        if play_mode.play_check == True:
+            self.frame = (
+                                     self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
+            self.bt.run()
+            pass
 
     def draw(self):
-        if self.dir >= 0:
+        if math.cos(self.dir) >= 0:
             self.image.clip_composite_draw(int(self.frame) * 32, 0, 32, 32, 0, 'h', self.x, self.y, 32, 32)
         else:
             self.image.clip_draw(int(self.frame) * 32, 0, 32, 32, self.x, self.y, 32, 32)
@@ -80,7 +71,41 @@ class Ghost:
 
             if self.hp <= 0:
                 game_world.remove_object(self)
-                self.main_character.Exp += 10
+
+    def set_target_location(self, x=None, y=None):
+        if not x or not y:
+            raise ValueError("위치 지정을 해야합니다.")
+        self.tx, self.ty = play_mode.main_character.x, play_mode.main_character.x
+        return BehaviorTree.SUCCESS
+        pass
+
+    def distance_less_than(self, x1, y1, x2, y2, r):
+        distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
+        return distance2 < (PIXEL_PER_METER * r) ** 2
+        pass
+
+    def move_slightly_to(self, tx, ty):
+        self.dir = math.atan2(ty - self.y, tx - self.x)
+        self.speed = RUN_SPEED_PPS
+        self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
+        self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
+        pass
+
+    def move_to_main_character(self, r=0.5):
+        self.move_slightly_to(play_mode.main_character.x, play_mode.main_character.y)
+        if self.distance_less_than(play_mode.main_character.x, play_mode.main_character.y, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
+        pass
+
+    def build_behavior_tree(self):
+        a1 = Action('Set target location', self.set_target_location, 500, 50)  # action node 생성
+        a2 = Action('Move to', self.move_to_main_character)
+        root = SEQ_move_to_target_location = Sequence('Move to target location', a1, a2)
+
+        self.bt = BehaviorTree(root)
+        pass
 
 
 class Slime:
@@ -104,30 +129,18 @@ class Slime:
         self.hp = 10
         self.invulnerable_time = 1.0  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
+        self.tx, self.ty = 1000, 1000
+        self.build_behavior_tree()
 
     def update(self):
-        self.frame = (self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
 
-        self.dir = self.main_character.x - self.x
-        self.dir2 = self.main_character.y - self.y
-
-        distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
-
-        if distance != 0:
-            self.dir /= distance
-            self.dir2 /= distance
-
-        if self.dir != 0 and self.dir2 != 0:
-            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time * 0.5
-            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time * 0.5
-        else:
-            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
-            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
-
-        pass
+        if play_mode.play_check == True:
+            self.frame = (
+                                     self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
+            self.bt.run()
 
     def draw(self):
-        if self.dir >= 0:
+        if math.cos(self.dir) >= 0:
             self.image.clip_composite_draw(int(self.frame) * 28, 0, 28, 25, 0, 'h', self.x, self.y, 32, 32)
         else:
             self.image.clip_draw(int(self.frame) * 28, 0, 28, 25, self.x, self.y, 32, 32)
@@ -145,7 +158,41 @@ class Slime:
 
             if self.hp <= 0:
                 game_world.remove_object(self)
-                self.main_character.Exp += 10
+
+    def set_target_location(self, x=None, y=None):
+        if not x or not y:
+            raise ValueError("위치 지정을 해야합니다.")
+        self.tx, self.ty = play_mode.main_character.x, play_mode.main_character.x
+        return BehaviorTree.SUCCESS
+        pass
+
+    def distance_less_than(self, x1, y1, x2, y2, r):
+        distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
+        return distance2 < (PIXEL_PER_METER * r) ** 2
+        pass
+
+    def move_slightly_to(self, tx, ty):
+        self.dir = math.atan2(ty - self.y, tx - self.x)
+        self.speed = RUN_SPEED_PPS
+        self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
+        self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
+        pass
+
+    def move_to_main_character(self, r=0.5):
+        self.move_slightly_to(play_mode.main_character.x, play_mode.main_character.y)
+        if self.distance_less_than(play_mode.main_character.x, play_mode.main_character.y, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
+        pass
+
+    def build_behavior_tree(self):
+        a1 = Action('Set target location', self.set_target_location, 500, 50)  # action node 생성
+        a2 = Action('Move to', self.move_to_main_character)
+        root = SEQ_move_to_target_location = Sequence('Move to target location', a1, a2)
+
+        self.bt = BehaviorTree(root)
+        pass
 
 
 class Skeleton:
@@ -155,13 +202,12 @@ class Skeleton:
         if Skeleton.image == None:
             Skeleton.image = load_image('source/skeleton.png')
 
-    def __init__(self, main_character):
+    def __init__(self):
         self.hp = 10
-        self.main_character = main_character
         self.radius = 400
         self.radians = random.randint(0, 360)
-        self.x = self.main_character.x + self.radius * math.cos(math.radians(self.radians))
-        self.y = self.main_character.y + self.radius * math.sin(math.radians(self.radians))
+        self.x = play_mode.main_character.x + self.radius * math.cos(math.radians(self.radians))
+        self.y = play_mode.main_character.y + self.radius * math.sin(math.radians(self.radians))
         self.load_images()
         self.frame = random.randint(0, 4)
         self.dir = random.choice([-1, 1])
@@ -169,30 +215,18 @@ class Skeleton:
         self.size = 16
         self.invulnerable_time = 1.0  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
+        self.tx, self.ty = 1000, 1000
+        self.build_behavior_tree()
 
     def update(self):
-        self.frame = (self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
-
-        self.dir = self.main_character.x - self.x
-        self.dir2 = self.main_character.y - self.y
-
-        distance = (self.dir ** 2 + self.dir2 ** 2) ** 0.5
-
-        if distance != 0:
-            self.dir /= distance
-            self.dir2 /= distance
-
-        if self.dir != 0 and self.dir2 != 0:
-            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time * 0.5
-            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time * 0.5
-        else:
-            self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
-            self.y += RUN_SPEED_PPS * self.dir2 * game_framework.frame_time
-
-        pass
+        if play_mode.play_check == True:
+            self.frame = (
+                                     self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
+            # fill here
+            self.bt.run()
 
     def draw(self):
-        if self.dir >= 0:
+        if math.cos(self.dir) >= 0:
             self.image.clip_composite_draw(int(self.frame) * 35, 0, 35, 36, 0, 'h', self.x, self.y, 32, 32)
         else:
             self.image.clip_draw(int(self.frame) * 35, 0, 35, 36, self.x, self.y, 32, 32)
@@ -210,4 +244,38 @@ class Skeleton:
 
             if self.hp <= 0:
                 game_world.remove_object(self)
-                self.main_character.Exp += 10
+
+    def set_target_location(self, x=None, y=None):
+        if not x or not y:
+            raise ValueError("위치 지정을 해야합니다.")
+        self.tx, self.ty = play_mode.main_character.x, play_mode.main_character.x
+        return BehaviorTree.SUCCESS
+        pass
+
+    def distance_less_than(self, x1, y1, x2, y2, r):
+        distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
+        return distance2 < (PIXEL_PER_METER * r) ** 2
+        pass
+
+    def move_slightly_to(self, tx, ty):
+        self.dir = math.atan2(ty - self.y, tx - self.x)
+        self.speed = RUN_SPEED_PPS
+        self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
+        self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
+        pass
+
+    def move_to_main_character(self, r=0.5):
+        self.move_slightly_to(play_mode.main_character.x, play_mode.main_character.y)
+        if self.distance_less_than(play_mode.main_character.x, play_mode.main_character.y, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
+        pass
+
+    def build_behavior_tree(self):
+        a1 = Action('Set target location', self.set_target_location, 500, 50)  # action node 생성
+        a2 = Action('Move to', self.move_to_main_character)
+        root = SEQ_move_to_target_location = Sequence('Move to target location', a1, a2)
+
+        self.bt = BehaviorTree(root)
+        pass
