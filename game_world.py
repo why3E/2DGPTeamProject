@@ -1,3 +1,4 @@
+import item_mode
 import play_mode
 
 objects = [[] for _ in range(4)]
@@ -14,10 +15,9 @@ def add_objects(ol, depth=0):
 
 
 def update():
-    if play_mode.play_check ==True:
-        for layer in objects:
-            for o in layer:
-                o.update()
+    for layer in objects:
+        for o in layer:
+            o.update()
 
 
 def render():
