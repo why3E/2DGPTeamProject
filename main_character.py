@@ -201,6 +201,7 @@ class Main_Character:
         self.hp_max = 50
         self.atk_speed = 1.0
         self.move_speed = 1.0
+        self.atk = 6
         self.level = 1
         # 경험치 최대량은 level*100 이런식으로 구상
         self.Exp = 10  # 경험치를 채운 정도

@@ -51,7 +51,7 @@ def init():
     game_world.add_object(bow, 1)
 
     magic = Magic(main_character)
-
+    game_world.add_object(magic, 1)
 
 def update():
     global start_time

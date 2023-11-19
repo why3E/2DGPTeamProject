@@ -114,73 +114,55 @@ class Swordline:
 class Magic:
     def __init__(self, main_character):
         self.main_character = main_character
-        self.level = 1
-        magic_line = Magicline(main_character, self.level + 1)
-        game_world.add_object(magic_line)
-
-
-animation_names_two = ['cir']
-
-
-class Magicline:
-    images = None
-
-    def __init__(self, main_character, num_circles):
-        self.main_character = main_character
-        self.radius = 60
-        self.angular_velocity = 180  # 180도/초로 설정
-        self.magic_circles = []  # 원에 대한 정보를 저장할 리스트
-        self.count = 2
-        self.TIME_PER_ACTION = 0.5
-        self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
-        self.FRAMES_PER_ACTION = 4.0
-
-        if Magicline.images is None:
-            Magicline.images = {}
-            for name in animation_names_two:
-                Magicline.images[name] = [load_image("source/" + name + " (%d)" % i + ".png") for i in range(1, 5)]
-
-        self.initialize_circles(num_circles)
-
-    def initialize_circles(self, num_circles):
-        angle_interval = 360 / num_circles
-        for i in range(num_circles):
-            self.add_circle(angle=i * angle_interval)
-
-    def add_circle(self, angle=0):
-        new_circle = {'angle': angle, 'radius': self.radius}
-        self.magic_circles.append(new_circle)
-
-    def draw(self):
-        for circle in self.magic_circles:
-            draw_x = self.main_character.x + circle['radius'] * math.cos(math.radians(circle['angle']))
-            draw_y = self.main_character.y + circle['radius'] * math.sin(math.radians(circle['angle']))
-
-            Magicline.images['cir'][int(self.count)].draw(draw_x, draw_y - 10, circle['radius'], circle['radius'])
-
-            draw_rectangle(*self.get_bb(circle))
+        self.last_collision_time = time.time()
+        self.invulnerable_time = 0.50  # 예시로 2초로 설정
 
     def update(self):
 
         if play_mode.play_check == True:
-            self.count = (self.count + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 4
+            current_time = time.time()
 
-            for circle in self.magic_circles:
-                circle['angle'] = (circle['angle'] + self.angular_velocity * game_framework.frame_time) % 360
+            if current_time - self.last_collision_time > self.invulnerable_time:
+                self.last_collision_time = current_time
+                magic_circle = Magiccircle()
+                game_world.add_object(magic_circle)
+                game_world.add_collision_pair('atk:monster', None, magic_circle)
+    def draw(self):
+        pass
 
-            if int(self.count) == 3:
-                self.count = 0
+animation_names_two = ['cir']
 
-    def get_bb(self, circle):
-        circle_x = self.main_character.x + circle['radius'] * math.cos(math.radians(circle['angle']))
-        circle_y = self.main_character.y + circle['radius'] * math.sin(math.radians(circle['angle']))
+class Magiccircle:
+    images = None
+    def __init__(self):
+        self.TIME_PER_ACTION = 0.5
+        self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
+        self.FRAMES_PER_ACTION = 4.0
+        self.size = 50
+        self.frame = 0
+        self.x,self.y = random.randint(100, 700),random.randint(100, 700)
+        if Magiccircle.images is None:
+            Magiccircle.images = {}
+            for name in animation_names_two:
+                Magiccircle.images[name] = [load_image("source/" + name + " (%d)" % i + ".png") for i in range(1, 5)]
 
-        min_x = circle_x - circle['radius'] / 2
-        min_y = circle_y - circle['radius'] / 2 - 10
-        max_x = circle_x + circle['radius'] / 2
-        max_y = circle_y + circle['radius'] / 2 - 10
 
-        return min_x, min_y, max_x, max_y
+    def draw(self):
+        self.images['cir'][int(self.frame)].clip_composite_draw(0, 0, 220, 220, 0, '', self.x, self.y, self.size, self.size)
+        draw_rectangle(*self.get_bb())
+
+    def update(self):
+        if play_mode.play_check == True:
+            self.frame = (self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 4
+
+
+    def get_bb(self):
+        return self.x - self.size/2, self.y - self.size/2, self.x + self.size/2, self.y + self.size/2
+
+    def handle_collision(self, group, other):
+        if group == 'atk:monster':
+            game_world.remove_object(self)
+        pass
 
 
 class Bow:

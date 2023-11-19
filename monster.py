@@ -67,7 +67,7 @@ class Ghost:
         current_time = get_time()
         if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
             self.last_collision_time = current_time
-            self.hp -= 5
+            self.hp -= play_mode.main_character.atk
 
             if self.hp <= 0:
                 game_world.remove_object(self)
@@ -154,7 +154,8 @@ class Slime:
         current_time = get_time()
         if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
             self.last_collision_time = current_time
-            self.hp -= 5
+
+            self.hp -= play_mode.main_character.atk
 
             if self.hp <= 0:
                 game_world.remove_object(self)
@@ -240,7 +241,7 @@ class Skeleton:
         current_time = get_time()
         if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
             self.last_collision_time = current_time
-            self.hp -= 5
+            self.hp -= play_mode.main_character.atk
 
             if self.hp <= 0:
                 game_world.remove_object(self)
