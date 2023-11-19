@@ -1,8 +1,6 @@
 from pico2d import *
 
 import game_world
-import play_mode
-import title_mode
 import game_framework
 from pannel import Pannel
 
@@ -19,8 +17,15 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN:
             match event.key:
-                case pico2d.SDLK_ESCAPE:
+                case pico2d.SDLK_UP:
+                    pannel.check-=1
+                    pannel.check %=3
+                case pico2d.SDLK_DOWN:
+                    pannel.check+=1
+                    pannel.check %=3
+                case pico2d.SDLK_SPACE:
                     game_framework.pop_mode()
+
 
 
 def init():
