@@ -9,6 +9,7 @@ import play_mode
 
 
 class Sword:
+    image = None
     image1 = None
     image2 = None
     image3 = None
@@ -16,7 +17,7 @@ class Sword:
 
     def __init__(self, main_character):
         self.main_character = main_character
-        self.level = 5
+        self.level = 1
         self.load_images()
         self.x, self.y, self.velocity = main_character.x, main_character.y, main_character.face_dir * 20
         self.image_dict = {
@@ -27,7 +28,7 @@ class Sword:
         }
 
     def load_images(self):
-        if Sword.image1 is None:
+        if Sword.image is None:
             Sword.image1 = load_image('source/sword_01.png')
             Sword.image2 = load_image('source/sword_02.png')
             Sword.image3 = load_image('source/sword_03.png')
@@ -35,9 +36,9 @@ class Sword:
 
     def draw(self):
         if self.main_character.face_dir == 1:
-            Sword.image1.draw(self.x + self.velocity, self.y - 10)
+            Sword.image.draw(self.x + self.velocity, self.y - 10)
         else:
-            Sword.image1.clip_composite_draw(0, 0, 32, 32, 0, 'h', self.x + self.velocity, self.y - 10, 32, 32)
+            Sword.image.clip_composite_draw(0, 0, 32, 32, 0, 'h', self.x + self.velocity, self.y - 10, 32, 32)
 
     def update(self):
         if play_mode.play_check ==True:

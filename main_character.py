@@ -214,7 +214,7 @@ class Main_Character:
         self.RUN_SPEED_PPS = (self.RUN_SPEED_MPS * self.PIXEL_PER_METER)
 
         self.sword = Sword(self)
-        game_world.add_object(self.sword, 0)
+        game_world.add_object(self.sword, 1)
 
         self.sword_line = Swordline(self)
         game_world.add_object(self.sword_line, 1)
