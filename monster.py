@@ -22,10 +22,12 @@ SKELETON_FRAMES_PER_ACTION = 4.0
 
 class Ghost:
     image = None
+    dead_image = None
 
     def load_images(self):
         if Ghost.image == None:
             Ghost.image = load_image('source/ghost_AT.png')
+            Ghost.dead_image = load_image('source/ghost_HURT.png')
 
     def __init__(self, main_character):
         self.main_character = main_character
@@ -39,7 +41,7 @@ class Ghost:
         self.dir2 = random.choice([-1, 1])
         self.size = 16
         self.hp = 10
-        self.invulnerable_time = 1.0  # 무적 상태 지속 시간
+        self.invulnerable_time = play_mode.main_character.atk_speed  # 무적 상태 지속 시간 - 캐릭터 공격속도로 지정하면 될듯?
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
         self.build_behavior_tree()
@@ -70,6 +72,7 @@ class Ghost:
             self.hp -= play_mode.main_character.atk
 
             if self.hp <= 0:
+
                 game_world.remove_object(self)
 
     def set_target_location(self, x=None, y=None):
@@ -127,7 +130,7 @@ class Slime:
         self.dir2 = random.choice([-1, 1])
         self.size = 16
         self.hp = 10
-        self.invulnerable_time = 1.0  # 무적 상태 지속 시간
+        self.invulnerable_time = play_mode.main_character.atk_speed  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
         self.build_behavior_tree()
@@ -154,11 +157,13 @@ class Slime:
         current_time = get_time()
         if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
             self.last_collision_time = current_time
-
             self.hp -= play_mode.main_character.atk
 
             if self.hp <= 0:
                 game_world.remove_object(self)
+        elif group == 'skeleton:slime':
+            self.x -= self.speed/2 * math.cos(self.dir) * game_framework.frame_time
+            self.y -= self.speed/2 * math.sin(self.dir) * game_framework.frame_time
 
     def set_target_location(self, x=None, y=None):
         if not x or not y:
@@ -214,7 +219,7 @@ class Skeleton:
         self.dir = random.choice([-1, 1])
         self.dir2 = random.choice([-1, 1])
         self.size = 16
-        self.invulnerable_time = 1.0  # 무적 상태 지속 시간
+        self.invulnerable_time = play_mode.main_character.atk_speed  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
         self.build_behavior_tree()
@@ -242,9 +247,11 @@ class Skeleton:
         if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
             self.last_collision_time = current_time
             self.hp -= play_mode.main_character.atk
-
             if self.hp <= 0:
                 game_world.remove_object(self)
+        elif group == 'skeleton:slime':
+            self.x -= self.speed * math.cos(self.dir) * game_framework.frame_time
+            self.y -= self.speed * math.sin(self.dir) * game_framework.frame_time
 
     def set_target_location(self, x=None, y=None):
         if not x or not y:
