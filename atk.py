@@ -16,7 +16,7 @@ class Sword:
 
     def __init__(self, main_character):
         self.main_character = main_character
-        self.level = 1
+        self.level = 5
         self.load_images()
         self.x, self.y, self.velocity = main_character.x, main_character.y, main_character.face_dir * 20
         self.image_dict = {
@@ -27,7 +27,6 @@ class Sword:
         }
 
     def load_images(self):
-        global image1, image2, image3, image4, image5
         if Sword.image1 is None:
             Sword.image1 = load_image('source/sword_01.png')
             Sword.image2 = load_image('source/sword_02.png')
@@ -65,7 +64,7 @@ class Swordline:
         self.count = 0
         self.wait_time = get_time()
 
-        self.TIME_PER_ACTION = 0.5 / self.main_character.atk_speed
+        self.TIME_PER_ACTION = 0.5 / play_mode.sword.level
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
         self.FRAMES_PER_ACTION = 4.0
 
@@ -115,10 +114,11 @@ class Magic:
     def __init__(self, main_character):
         self.main_character = main_character
         self.last_collision_time = time.time()
-        self.invulnerable_time = 0.50  # 예시로 2초로 설정
+        self.level = 1
+        self.invulnerable_time = 2.0 / self.level  # 예시로 2초로 설정
 
     def update(self):
-
+        self.invulnerable_time = 2.0 / self.level
         if play_mode.play_check == True:
             current_time = time.time()
 
@@ -155,7 +155,6 @@ class Magiccircle:
         if play_mode.play_check == True:
             self.frame = (self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 4
 
-
     def get_bb(self):
         return self.x - self.size/2, self.y - self.size/2, self.x + self.size/2, self.y + self.size/2
 
@@ -169,10 +168,11 @@ class Bow:
     def __init__(self, main_character):
         self.main_character = main_character
         self.last_collision_time = time.time()
-        self.invulnerable_time = 0.50  # 예시로 2초로 설정
+        self.level = 1
+        self.invulnerable_time = 1.0 / self.level  # 예시로 2초로 설정
 
     def update(self):
-
+        self.invulnerable_time = 1.0 / self.level
         if play_mode.play_check == True:
             current_time = time.time()
 
