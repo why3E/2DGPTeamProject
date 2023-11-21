@@ -40,18 +40,7 @@ def init():
     background = Background(main_character)
     game_world.add_object(background, 0)
 
-    sword = Sword(main_character)
-    game_world.add_object(sword, 0)
 
-    sword_line = Swordline(main_character)
-    game_world.add_object(sword_line, 1)
-    game_world.add_collision_pair('atk:monster', None, sword_line)
-
-    bow = Bow(main_character)
-    game_world.add_object(bow, 1)
-
-    magic = Magic(main_character)
-    game_world.add_object(magic, 1)
 
 def update():
     global start_time
@@ -67,22 +56,25 @@ def update():
     if int((current_time - start_time) / 2) > 0:
         start_time = current_time
 
+        skeleton = Skeleton()
+        slime = Slime(main_character)
         ghost = Ghost(main_character)
+
         game_world.add_object(ghost, 1)
         game_world.add_collision_pair('main_character:monster', ghost, None)
         game_world.add_collision_pair('atk:monster', ghost, None)
 
-        slime = Slime(main_character)
         game_world.add_object(slime, 1)
         game_world.add_collision_pair('main_character:monster', slime, None)
         game_world.add_collision_pair('atk:monster', slime, None)
+        game_world.add_collision_pair('skeleton:slime', None, slime)
 
-        skeleton = Skeleton()
         game_world.add_object(skeleton, 1)
         game_world.add_collision_pair('main_character:monster', skeleton, None)
         game_world.add_collision_pair('atk:monster', skeleton, None)
+        game_world.add_collision_pair('skeleton:slime', skeleton, None)
 
-
+# 스켈레톤이랑 슬라임이 곂쳐지게 되면 다른 몬스터로 진화하고 유령은 시야에 보였다 안보였다를 반복하는 특징을 가지게 해도 괜찮을 것 같음
 def draw():
     clear_canvas()
     game_world.render()

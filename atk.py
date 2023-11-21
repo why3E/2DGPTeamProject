@@ -64,7 +64,7 @@ class Swordline:
         self.count = 0
         self.wait_time = get_time()
 
-        self.TIME_PER_ACTION = 0.5 / play_mode.sword.level
+        self.TIME_PER_ACTION = 0.5 / main_character.sword.level
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
         self.FRAMES_PER_ACTION = 4.0
 

@@ -7,11 +7,9 @@ from pannel import Pannel
 
 # Game object class here
 
-item = ['bow','sword','magic']
-
+item_list = ['bow','sword','magic']
 def handle_events():
     events = get_events()
-
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()

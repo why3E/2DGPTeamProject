@@ -195,7 +195,7 @@ class Main_Character:
         self.exp_image = load_image('source/EXP_exp.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-        self.item = ['sword', 'magic', 'bow']
+        self.item = ['sword', 'magic', 'bow', 'ring','amor', 'glove']
         # 캐릭터 패시브
         self.hp = 50
         self.hp_max = 50
@@ -212,6 +212,19 @@ class Main_Character:
         self.RUN_SPEED_MPM = (self.RUN_SPEED_KMPH * 1000.0 / 60.0)
         self.RUN_SPEED_MPS = (self.RUN_SPEED_MPM / 60.0)
         self.RUN_SPEED_PPS = (self.RUN_SPEED_MPS * self.PIXEL_PER_METER)
+
+        self.sword = Sword(self)
+        game_world.add_object(self.sword, 0)
+
+        self.sword_line = Swordline(self)
+        game_world.add_object(self.sword_line, 1)
+        game_world.add_collision_pair('atk:monster', None, self.sword_line)
+
+        self.bow = Bow(self)
+        game_world.add_object(self.bow, 1)
+
+        self.magic = Magic(self)
+        game_world.add_object(self.magic, 1)
 
     def update(self):
 
@@ -242,4 +255,22 @@ class Main_Character:
         if group == 'main_character:monster':
             self.hp -= 1
             pass
-
+    def level_up(self, a):
+        if a == 'bow': # 5렙이후에는 아이템 고르는 부분의 리스트에서 제거해서 애초에 넘어올 경우가 없게 만들 예정
+            play_mode.bow.level += 1
+            pass
+        if a == 'sword':
+            play_mode.sword.level += 1
+            pass
+        if a == 'magic':
+            play_mode.magic.level += 1
+            pass
+        if a == 'ring':
+            #play_mode.ring.level += 1
+            pass
+        if a == 'amor':
+            #play_mode.amor.level += 1
+            pass
+        if a == 'glove':
+            #play_mode.glove.level += 1
+            pass

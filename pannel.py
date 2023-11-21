@@ -8,13 +8,13 @@ class Pannel:
         self.choice_size1 = 380
         self.choice_size2 = 300
         self.choice_size3 = 300
+        self.item_random=['bow','sword','magic']
     def draw(self):
         self.image.draw(400, 400,400,500)
 
         self.choice_image.draw(400, 550, self.choice_size1, 100)
         self.choice_image.draw(400, 400, self.choice_size2,100)
         self.choice_image.draw(400, 250, self.choice_size3, 100)
-
 
     def update(self):
         if self.check == 0:
