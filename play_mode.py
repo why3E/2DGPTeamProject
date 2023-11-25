@@ -57,8 +57,8 @@ def update():
         start_time = current_time
 
         skeleton = Skeleton()
-        slime = Slime(main_character)
-        ghost = Ghost(main_character)
+        slime = Slime()
+        ghost = Ghost()
 
         game_world.add_object(ghost, 1)
         game_world.add_collision_pair('main_character:monster', ghost, None)
@@ -67,14 +67,22 @@ def update():
         game_world.add_object(slime, 1)
         game_world.add_collision_pair('main_character:monster', slime, None)
         game_world.add_collision_pair('atk:monster', slime, None)
-        game_world.add_collision_pair('skeleton:slime', None, slime)
 
         game_world.add_object(skeleton, 1)
         game_world.add_collision_pair('main_character:monster', skeleton, None)
         game_world.add_collision_pair('atk:monster', skeleton, None)
-        game_world.add_collision_pair('skeleton:slime', skeleton, None)
+
+        game_world.add_collision_pair('ghost:skeleton', ghost, None)
+        game_world.add_collision_pair('ghost:skeleton', None, skeleton)
+
+        game_world.add_collision_pair('slime:skeleton', None, slime)
+        game_world.add_collision_pair('slime:skeleton', skeleton, None)
+
+        game_world.add_collision_pair('ghost:slime', slime, None)
+        game_world.add_collision_pair('ghost:slime', None, ghost)
 
 # 스켈레톤이랑 슬라임이 곂쳐지게 되면 다른 몬스터로 진화하고 유령은 시야에 보였다 안보였다를 반복하는 특징을 가지게 해도 괜찮을 것 같음
+
 def draw():
     clear_canvas()
     game_world.render()

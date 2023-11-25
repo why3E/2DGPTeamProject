@@ -4,6 +4,7 @@ from pico2d import *
 import game_world
 import play_mode
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
+from middle_monster import Slime_Slime, Sliem_Skeleton, Skeleton_ghost
 
 # zombie Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
@@ -29,12 +30,11 @@ class Ghost:
             Ghost.image = load_image('source/ghost_AT.png')
             Ghost.dead_image = load_image('source/ghost_HURT.png')
 
-    def __init__(self, main_character):
-        self.main_character = main_character
+    def __init__(self):
         self.radius = 400
         self.radians = random.randint(0, 360)
-        self.x = self.main_character.x + self.radius * math.cos(math.radians(self.radians))
-        self.y = self.main_character.y + self.radius * math.sin(math.radians(self.radians))
+        self.x = play_mode.main_character.x + self.radius * math.cos(math.radians(self.radians))
+        self.y = play_mode.main_character.y + self.radius * math.sin(math.radians(self.radians))
         self.load_images()
         self.frame = random.randint(0, 4)
         self.dir = random.choice([-1, 1])
@@ -50,7 +50,7 @@ class Ghost:
 
         if play_mode.play_check == True:
             self.frame = (
-                                     self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
+                                 self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
             self.bt.run()
             pass
 
@@ -72,8 +72,15 @@ class Ghost:
             self.hp -= play_mode.main_character.atk
 
             if self.hp <= 0:
-
                 game_world.remove_object(self)
+        elif group == 'ghost:slime':
+            game_world.remove_object(self)
+        elif group == 'ghost:skeleton':
+            skeleton_ghost = Skeleton_ghost(self)
+            game_world.add_object(skeleton_ghost, 1)
+            game_world.add_collision_pair('main_character:monster', skeleton_ghost, None)
+            game_world.add_collision_pair('atk:monster', skeleton_ghost, None)
+            game_world.remove_object(self)
 
     def set_target_location(self, x=None, y=None):
         if not x or not y:
@@ -118,12 +125,11 @@ class Slime:
         if Slime.image == None:
             Slime.image = load_image('source/slime_2.png')
 
-    def __init__(self, main_character):
-        self.main_character = main_character
+    def __init__(self):
         self.radius = 400
         self.radians = random.randint(0, 360)
-        self.x = self.main_character.x + self.radius * math.cos(math.radians(self.radians))
-        self.y = self.main_character.y + self.radius * math.sin(math.radians(self.radians))
+        self.x = play_mode.main_character.x + self.radius * math.cos(math.radians(self.radians))
+        self.y = play_mode.main_character.y + self.radius * math.sin(math.radians(self.radians))
         self.load_images()
         self.frame = random.randint(0, 7)
         self.dir = random.choice([-1, 1])
@@ -139,7 +145,7 @@ class Slime:
 
         if play_mode.play_check == True:
             self.frame = (
-                                     self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
+                                 self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
             self.bt.run()
 
     def draw(self):
@@ -161,9 +167,15 @@ class Slime:
 
             if self.hp <= 0:
                 game_world.remove_object(self)
-        elif group == 'skeleton:slime':
-            self.x -= self.speed/2 * math.cos(self.dir) * game_framework.frame_time
-            self.y -= self.speed/2 * math.sin(self.dir) * game_framework.frame_time
+        elif group == 'ghost:slime':
+            slime_slime = Slime_Slime(self)
+            game_world.add_object(slime_slime, 1)
+            game_world.add_collision_pair('main_character:monster', slime_slime, None)
+            game_world.add_collision_pair('atk:monster', slime_slime, None)
+
+            game_world.remove_object(self)
+        elif group == 'slime:skeleton':
+            game_world.remove_object(self)
 
     def set_target_location(self, x=None, y=None):
         if not x or not y:
@@ -227,7 +239,7 @@ class Skeleton:
     def update(self):
         if play_mode.play_check == True:
             self.frame = (
-                                     self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
+                                 self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
             # fill here
             self.bt.run()
 
@@ -249,9 +261,14 @@ class Skeleton:
             self.hp -= play_mode.main_character.atk
             if self.hp <= 0:
                 game_world.remove_object(self)
-        elif group == 'skeleton:slime':
-            self.x -= self.speed * math.cos(self.dir) * game_framework.frame_time
-            self.y -= self.speed * math.sin(self.dir) * game_framework.frame_time
+        elif group == 'slime:skeleton':
+            slime_skeleton = Sliem_Skeleton(self)
+            game_world.add_object(slime_skeleton, 1)
+            game_world.add_collision_pair('main_character:monster', slime_skeleton, None)
+            game_world.add_collision_pair('atk:monster', slime_skeleton, None)
+            game_world.remove_object(self)
+        elif group == 'ghost:skeleton':
+            game_world.remove_object(self)
 
     def set_target_location(self, x=None, y=None):
         if not x or not y:

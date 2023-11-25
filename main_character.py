@@ -226,6 +226,7 @@ class Main_Character:
         self.magic = Magic(self)
         game_world.add_object(self.magic, 1)
 
+
     def update(self):
 
         if play_mode.play_check == True:
@@ -257,20 +258,24 @@ class Main_Character:
             pass
     def level_up(self, a):
         if a == 'bow': # 5렙이후에는 아이템 고르는 부분의 리스트에서 제거해서 애초에 넘어올 경우가 없게 만들 예정
-            play_mode.bow.level += 1
+            self.bow.level += 1
             pass
         if a == 'sword':
-            play_mode.sword.level += 1
+            self.sword.level += 1
             pass
         if a == 'magic':
-            play_mode.magic.level += 1
+            self.magic.level += 1
             pass
         if a == 'ring':
-            #play_mode.ring.level += 1
+            #self.ring.level += 1
+            #self.atk += 10
             pass
         if a == 'amor':
             #play_mode.amor.level += 1
+            #self.hp_max += 20
+            #self.hp += 20
             pass
         if a == 'glove':
-            #play_mode.glove.level += 1
+            #self.glove.level += 1
+            #self.atk_speed = 1.0 - 0.1 * self.glove.level
             pass
