@@ -30,9 +30,13 @@ def init():
     global main_character
     global start_time
     global play_check
+    global paturn_time
+    global elapsed_time
 
     play_check = True
-    start_time = get_time() + 1
+    start_time = get_time()+1
+    elapsed_time = get_time()+1
+    paturn_time = 10
     main_character = Main_Character()
     game_world.add_object(main_character, 1)
     game_world.add_collision_pair('main_character:monster', None, main_character)
@@ -44,6 +48,8 @@ def init():
 
 def update():
     global start_time
+    global paturn_time
+    global elapsed_time
     if main_character.hp <= 0:
         game_world.clear()
         game_framework.change_mode(title_mode)
@@ -53,9 +59,13 @@ def update():
 
     current_time = get_time()
 
-    if int((current_time - start_time) / 2) > 0:
-        start_time = current_time
+    if int(current_time-elapsed_time) >= 100:  # 100초가 경과했는지 확인
+        elapsed_time = current_time  # 경과 시간 초기화
+        paturn_time -= 3
+        print('패턴')# 패턴 주기를 10초로 변경
 
+    if int((current_time - start_time) / paturn_time) > 0:
+        start_time = current_time
         skeleton = Skeleton()
         slime = Slime()
         ghost = Ghost()
@@ -80,8 +90,6 @@ def update():
 
         game_world.add_collision_pair('ghost:slime', slime, None)
         game_world.add_collision_pair('ghost:slime', None, ghost)
-
-# 스켈레톤이랑 슬라임이 곂쳐지게 되면 다른 몬스터로 진화하고 유령은 시야에 보였다 안보였다를 반복하는 특징을 가지게 해도 괜찮을 것 같음
 
 def draw():
     clear_canvas()
