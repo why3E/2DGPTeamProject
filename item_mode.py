@@ -2,12 +2,11 @@ from pico2d import *
 
 import game_world
 import game_framework
+import play_mode
 from pannel import Pannel
 
 
 # Game object class here
-
-item_list = ['bow','sword','magic']
 def handle_events():
     events = get_events()
     for event in events:
@@ -22,6 +21,7 @@ def handle_events():
                     pannel.check+=1
                     pannel.check %=3
                 case pico2d.SDLK_SPACE:
+                    play_mode.main_character.bow.level+=1
                     game_framework.pop_mode()
 
 

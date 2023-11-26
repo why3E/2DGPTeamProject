@@ -18,8 +18,10 @@ class Sword:
     def __init__(self, main_character):
         self.main_character = main_character
         self.level = 1
-        self.load_images()
         self.x, self.y, self.velocity = main_character.x, main_character.y, main_character.face_dir * 20
+        self.load_images()
+        self.invulnerable_time = 2.0 / self.level
+        self.last_collision_time = time.time()
         self.image_dict = {
             1: Sword.image1,
             2: Sword.image2,
@@ -46,26 +48,32 @@ class Sword:
             if self.level in self.image_dict:
                 Sword.image = self.image_dict[self.level]
 
+            self.invulnerable_time = 2.0 / self.level
+            current_time = time.time()
+            if self.level in self.image_dict:
+                Magic.image = self.image_dict[self.level]
+            if current_time - self.last_collision_time > self.invulnerable_time:
+                self.last_collision_time = current_time
+                sword_line = Swordline(self.main_character)
+                game_world.add_object(sword_line, 1)
+                game_world.add_collision_pair('atk:monster', None, sword_line)
 
 # zombie Action Speed
-
-
 animation_names = ['sword']
 
 
 class Swordline:
     images = None
-
     def __init__(self, main_character):
         self.main_character = main_character
         self.x, self.y, self.velocity = main_character.x, main_character.y, main_character.face_dir * 20
         self.frame = 0
-        self.size = 80
+        self.size = 80+self.main_character.sword.level*10
         self.pos = 15
         self.count = 0
         self.wait_time = get_time()
 
-        self.TIME_PER_ACTION = 0.5 / main_character.sword.level
+        self.TIME_PER_ACTION = 0.5 / self.main_character.sword.level
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
         self.FRAMES_PER_ACTION = 4.0
 
@@ -86,16 +94,14 @@ class Swordline:
             draw_rectangle(*self.get_bb())
 
     def update(self):
-
         if play_mode.play_check == True:
+            self.TIME_PER_ACTION = 0.5 / self.main_character.sword.level
             self.x, self.y, self.velocity = self.main_character.x, self.main_character.y, self.main_character.face_dir * 20
             self.frame = (
                                  self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % self.FRAMES_PER_ACTION
 
             if int(self.frame) == 3 and self.count == 3:
-                self.count = 0
-                self.frame = 0
-                self.size = 80
+                game_world.remove_object(self)
             if int(self.frame) == 3:
                 self.count += 1
                 self.frame = 0
@@ -112,22 +118,45 @@ class Swordline:
 
 
 class Magic:
+    image = None
+    image1 = None
+    image2 = None
+    image3 = None
+    image4 = None
+
     def __init__(self, main_character):
         self.main_character = main_character
         self.last_collision_time = time.time()
-        self.level = 1
-        self.invulnerable_time = 2.0 / self.level  # 예시로 2초로 설정
+        self.level = 0
+        self.invulnerable_time = 2.0  # 예시로 2초로 설정
+        self.load_images()
+        self.image_dict = {
+            0: Magic.image1,
+            1: Magic.image1,
+            2: Magic.image2,
+            3: Magic.image3,
+            4: Magic.image4
+        }
+
+    def load_images(self):
+        if Magic.image is None:
+            Magic.image1 = load_image('source/saintring_00.png')
+            Magic.image2 = load_image('source/saintring_01.png')
+            Magic.image3 = load_image('source/saintring_02.png')
+            Magic.image4 = load_image('source/saintring_03.png')
 
     def update(self):
-        self.invulnerable_time = 2.0 / self.level
-        if play_mode.play_check == True:
-            current_time = time.time()
-
-            if current_time - self.last_collision_time > self.invulnerable_time:
-                self.last_collision_time = current_time
-                magic_circle = Magiccircle()
-                game_world.add_object(magic_circle)
-                game_world.add_collision_pair('atk:monster', None, magic_circle)
+        if self.level != 0:
+            self.invulnerable_time = 2.0 / self.level
+            if play_mode.play_check == True:
+                current_time = time.time()
+                if self.level in self.image_dict:
+                    Magic.image = self.image_dict[self.level]
+                if current_time - self.last_collision_time > self.invulnerable_time:
+                    self.last_collision_time = current_time
+                    magic_circle = Magiccircle()
+                    game_world.add_object(magic_circle)
+                    game_world.add_collision_pair('atk:monster', None, magic_circle)
     def draw(self):
         pass
 
@@ -166,22 +195,44 @@ class Magiccircle:
 
 
 class Bow:
+    image = None
+    image1 = None
+    image2 = None
+    image3 = None
+    image4 = None
     def __init__(self, main_character):
         self.main_character = main_character
         self.last_collision_time = time.time()
-        self.level = 1
-        self.invulnerable_time = 1.0 / self.level  # 예시로 2초로 설정
+        self.level = 0
+        self.invulnerable_time = 1.0   # 예시로 2초로 설정
+        self.load_images()
+        self.image_dict = {
+            0: Bow.image1,
+            1: Bow.image1,
+            2: Bow.image2,
+            3: Bow.image3,
+            4: Bow.image4
+        }
+
+    def load_images(self):
+        if Bow.image is None:
+            Bow.image1 = load_image('source/bow_00.png')
+            Bow.image2 = load_image('source/bow_01.png')
+            Bow.image3 = load_image('source/bow_02.png')
+            Bow.image4 = load_image('source/bow_03.png')
 
     def update(self):
-        self.invulnerable_time = 1.0 / self.level
-        if play_mode.play_check == True:
-            current_time = time.time()
-
-            if current_time - self.last_collision_time > self.invulnerable_time:
-                self.last_collision_time = current_time
-                arrow = Arrow(self.main_character)
-                game_world.add_object(arrow)
-                game_world.add_collision_pair('atk:monster', None, arrow)
+        if self.level != 0:
+            self.invulnerable_time = 1.0 / self.level
+            if play_mode.play_check == True:
+                current_time = time.time()
+                if self.level in self.image_dict:
+                    Bow.image = self.image_dict[self.level]
+                if current_time - self.last_collision_time > self.invulnerable_time:
+                    self.last_collision_time = current_time
+                    arrow = Arrow(self.main_character)
+                    game_world.add_object(arrow)
+                    game_world.add_collision_pair('atk:monster', None, arrow)
 
     def draw(self):
         pass
@@ -220,7 +271,6 @@ class Arrow:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-
         if play_mode.play_check == True:
             self.x += self.RUN_SPEED_PPS * math.cos(self.angle)
             self.y += self.RUN_SPEED_PPS * math.sin(self.angle)

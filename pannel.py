@@ -1,3 +1,5 @@
+import random
+
 from pico2d import load_image
 
 class Pannel:
@@ -9,6 +11,8 @@ class Pannel:
         self.choice_size2 = 300
         self.choice_size3 = 300
         self.item_random=['bow','sword','magic']
+        self.item_random_choice = random.sample(self.item_random, 3)
+
     def draw(self):
         self.image.draw(400, 400,400,500)
         self.choice_image.draw(400, 550, self.choice_size1, 100)

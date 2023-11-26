@@ -3,7 +3,6 @@ from pico2d import *
 import game_world
 import item_mode
 import title_mode
-from atk import Bow, Sword, Swordline, Magic
 from background import Background
 from main_character import Main_Character
 import game_framework
@@ -21,6 +20,7 @@ def handle_events():
             game_framework.change_mode(title_mode)
         elif event.type == SDL_KEYDOWN and event.key == SDLK_i:
             game_framework.push_mode(item_mode)
+            pass
         else:
             main_character.handle_event(event)
 

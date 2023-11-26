@@ -199,7 +199,7 @@ class Main_Character:
         # 캐릭터 패시브
         self.hp = 50
         self.hp_max = 50
-        self.atk_speed = 1.0
+        self.atk_speed = 0.5
         self.move_speed = 1.0
         self.atk = 6
         self.level = 1
@@ -215,10 +215,6 @@ class Main_Character:
 
         self.sword = Sword(self)
         game_world.add_object(self.sword, 1)
-
-        self.sword_line = Swordline(self)
-        game_world.add_object(self.sword_line, 1)
-        game_world.add_collision_pair('atk:monster', None, self.sword_line)
 
         self.bow = Bow(self)
         game_world.add_object(self.bow, 1)
