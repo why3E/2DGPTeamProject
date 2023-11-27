@@ -21,7 +21,6 @@ def handle_events():
                     pannel.check+=1
                     pannel.check %=3
                 case pico2d.SDLK_SPACE:
-                    play_mode.main_character.bow.level+=1
                     game_framework.pop_mode()
 
 

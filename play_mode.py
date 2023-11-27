@@ -43,13 +43,12 @@ def init():
 
     background = Background(main_character)
     game_world.add_object(background, 0)
-
-
-
+    #메인 캐릭터 초기값을 json이나 피클로 초기화 해서 파일 읽어들이는 걸로 수정해야함
 def update():
     global start_time
     global paturn_time
     global elapsed_time
+    
     if main_character.hp <= 0:
         game_world.clear()
         game_framework.change_mode(title_mode)

@@ -35,6 +35,7 @@ class Sword:
             Sword.image2 = load_image('source/sword_02.png')
             Sword.image3 = load_image('source/sword_03.png')
             Sword.image4 = load_image('source/sword_04.png')
+            Sword.image = Sword.image1
 
     def draw(self):
         if self.main_character.face_dir == 1:
@@ -118,7 +119,7 @@ class Swordline:
 
 
 class Magic:
-    image = None
+    Magic_image = None
     image1 = None
     image2 = None
     image3 = None
@@ -139,11 +140,12 @@ class Magic:
         }
 
     def load_images(self):
-        if Magic.image is None:
+        if Magic.Magic_image is None:
             Magic.image1 = load_image('source/saintring_00.png')
             Magic.image2 = load_image('source/saintring_01.png')
             Magic.image3 = load_image('source/saintring_02.png')
             Magic.image4 = load_image('source/saintring_03.png')
+            Magic.Magic_image = Magic.image1
 
     def update(self):
         if self.level != 0:
@@ -195,7 +197,7 @@ class Magiccircle:
 
 
 class Bow:
-    image = None
+    Bow_image = None
     image1 = None
     image2 = None
     image3 = None
@@ -215,11 +217,12 @@ class Bow:
         }
 
     def load_images(self):
-        if Bow.image is None:
+        if Bow.Bow_image is None:
             Bow.image1 = load_image('source/bow_00.png')
             Bow.image2 = load_image('source/bow_01.png')
             Bow.image3 = load_image('source/bow_02.png')
             Bow.image4 = load_image('source/bow_03.png')
+            Bow.Bow_image = Bow.image1
 
     def update(self):
         if self.level != 0:
