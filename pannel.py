@@ -23,6 +23,7 @@ class Pannel:
         self.draw_item(self.item_random_choice[0],550)
         self.draw_item(self.item_random_choice[1], 400)
         self.draw_item(self.item_random_choice[2], 250)
+
     def update(self):
         if self.check == 0:
             self.choice_size1 = 380

@@ -255,12 +255,18 @@ class Main_Character:
     def level_up(self, a):
         if a == 'bow': # 5렙이후에는 아이템 고르는 부분의 리스트에서 제거해서 애초에 넘어올 경우가 없게 만들 예정
             self.bow.level += 1
+            if self.bow.level == 4:
+                self.item.remove('bow')
             pass
         if a == 'sword':
             self.sword.level += 1
+            if self.sword.level == 4:
+                self.item.remove('sword')
             pass
         if a == 'magic':
             self.magic.level += 1
+            if self.magic.level == 4:
+                self.item.remove('magic')
             pass
         if a == 'ring':
             #self.ring.level += 1
