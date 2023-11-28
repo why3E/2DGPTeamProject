@@ -25,7 +25,6 @@ def handle_events():
                     game_framework.pop_mode()
 
 
-
 def init():
     global pannel
     pannel = Pannel()

@@ -80,6 +80,7 @@ class Ghost:
             game_world.add_object(skeleton_ghost, 1)
             game_world.add_collision_pair('main_character:monster', skeleton_ghost, None)
             game_world.add_collision_pair('atk:monster', skeleton_ghost, None)
+
             game_world.remove_object(self)
 
     def set_target_location(self, x=None, y=None):

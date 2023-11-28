@@ -1,8 +1,10 @@
 import random
 
 from pico2d import load_image
+
+import pasive_item
 import play_mode
-import atk
+import atk_item
 
 
 class Pannel:
@@ -41,8 +43,14 @@ class Pannel:
 
     def draw_item(self, a, y):
         if a == 'sword':
-            atk.Sword.image.draw(300, y, 50, 50)
+            atk_item.Sword.image.draw(300, y, 50, 50)
         elif a == 'bow':
-            atk.Bow.Bow_image.draw(300, y, 50, 50)
+            atk_item.Bow.Bow_image.draw(300, y, 50, 50)
         elif a == 'magic':
-            atk.Magic.Magic_image.draw(300, y, 50, 50)
+            atk_item.Magic.Magic_image.draw(300, y, 50, 50)
+        elif a == 'ring':
+            pasive_item.Ring.Ring_image.draw(300, y, 50, 50)
+        elif a == 'amor':
+            pasive_item.Amor.Amor_image.draw(300, y, 50, 50)
+        elif a == 'glove':
+            pasive_item.Glove.Glove_image.draw(300, y, 50, 50)

@@ -6,8 +6,9 @@ from pico2d import get_time, clamp, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEF
 import game_framework
 import item_mode
 import play_mode
-from atk import Sword, Swordline, Magic, Bow
+from atk_item import Sword, Swordline, Magic, Bow
 import game_world
+from pasive_item import Ring, Amor, Glove
 
 # 키 입력이 왔을때 각각 따로 키를 계산하지 않고 이미 한번 donw 눌림이 인식된 키는 up이 들어올떄까지 True로 인식시킨다.
 # 상하, 좌우 나눌필요는 없고 Run에서 이동값을 계산할때만 따로 반영하면 됨
@@ -195,7 +196,7 @@ class Main_Character:
         self.exp_image = load_image('source/EXP_exp.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-        self.item = ['sword', 'magic', 'bow', 'ring','amor', 'glove']
+        self.item = ['sword', 'magic', 'bow', 'ring', 'amor', 'glove']
         # 캐릭터 패시브
         self.hp = 50
         self.hp_max = 50
@@ -222,6 +223,9 @@ class Main_Character:
         self.magic = Magic(self)
         game_world.add_object(self.magic, 1)
 
+        self.ring = Ring()
+        self.amor = Amor()
+        self.glove = Glove()
 
     def update(self):
 
@@ -231,6 +235,15 @@ class Main_Character:
                 self.level += 1
                 self.Exp = 0
             self.state_machine.update()
+        else:
+            self.right_move = 0
+            self.left_move = 0
+            self.up_move = 0
+            self.down_move = 0
+            # dir은 x이동 dir2는 y 이동
+            self.dir = 0
+            self.dir2 = 0
+            self.move_check = False
 
 
     def handle_event(self, event):
@@ -269,15 +282,23 @@ class Main_Character:
                 self.item.remove('magic')
             pass
         if a == 'ring':
-            #self.ring.level += 1
-            #self.atk += 10
+            self.ring.level += 1
+            self.atk += 10
+            if self.magic.level == 4:
+                self.item.remove('ring')
             pass
         if a == 'amor':
-            #play_mode.amor.level += 1
-            #self.hp_max += 20
-            #self.hp += 20
+            self.amor.level += 1
+            self.hp_max += 20
+            self.hp += 20
+
+            if self.amor.level == 4:
+                self.item.remove('amor')
             pass
         if a == 'glove':
-            #self.glove.level += 1
-            #self.atk_speed = 1.0 - 0.1 * self.glove.level
+            self.glove.level += 1
+            self.atk_speed = 1.0 - 0.1 * self.glove.level
+
+            if self.glove.level == 4:
+                self.item.remove('glove')
             pass

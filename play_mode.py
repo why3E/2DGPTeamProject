@@ -32,11 +32,12 @@ def init():
     global play_check
     global paturn_time
     global elapsed_time
-
+    global monster_count
+    monster_count = 1
     play_check = True
     start_time = get_time()+1
     elapsed_time = get_time()+1
-    paturn_time = 10
+    paturn_time = 3
     main_character = Main_Character()
     game_world.add_object(main_character, 1)
     game_world.add_collision_pair('main_character:monster', None, main_character)
@@ -48,7 +49,8 @@ def update():
     global start_time
     global paturn_time
     global elapsed_time
-    
+    global monster_count
+
     if main_character.hp <= 0:
         game_world.clear()
         game_framework.change_mode(title_mode)
@@ -58,37 +60,15 @@ def update():
 
     current_time = get_time()
 
-    if int(current_time-elapsed_time) >= 100:  # 100초가 경과했는지 확인
+    if int(current_time-elapsed_time) >= 20:  # 100초가 경과했는지 확인
         elapsed_time = current_time  # 경과 시간 초기화
-        paturn_time -= 3
+        monster_count+=1
         print('패턴')# 패턴 주기를 10초로 변경
 
     if int((current_time - start_time) / paturn_time) > 0:
         start_time = current_time
-        skeleton = Skeleton()
-        slime = Slime()
-        ghost = Ghost()
-
-        game_world.add_object(ghost, 1)
-        game_world.add_collision_pair('main_character:monster', ghost, None)
-        game_world.add_collision_pair('atk:monster', ghost, None)
-
-        game_world.add_object(slime, 1)
-        game_world.add_collision_pair('main_character:monster', slime, None)
-        game_world.add_collision_pair('atk:monster', slime, None)
-
-        game_world.add_object(skeleton, 1)
-        game_world.add_collision_pair('main_character:monster', skeleton, None)
-        game_world.add_collision_pair('atk:monster', skeleton, None)
-
-        game_world.add_collision_pair('ghost:skeleton', ghost, None)
-        game_world.add_collision_pair('ghost:skeleton', None, skeleton)
-
-        game_world.add_collision_pair('slime:skeleton', None, slime)
-        game_world.add_collision_pair('slime:skeleton', skeleton, None)
-
-        game_world.add_collision_pair('ghost:slime', slime, None)
-        game_world.add_collision_pair('ghost:slime', None, ghost)
+        for i in range(monster_count):
+            monster_make()
 
 def draw():
     clear_canvas()
@@ -111,3 +91,31 @@ def resume():
     global play_check
     play_check = True
     pass
+
+def monster_make():
+    global monster_count
+    skeleton = Skeleton()
+    slime = Slime()
+    ghost = Ghost()
+
+    game_world.add_object(ghost, 1)
+    game_world.add_collision_pair('main_character:monster', ghost, None)
+    game_world.add_collision_pair('atk:monster', ghost, None)
+
+    game_world.add_object(slime, 1)
+    game_world.add_collision_pair('main_character:monster', slime, None)
+    game_world.add_collision_pair('atk:monster', slime, None)
+
+    game_world.add_object(skeleton, 1)
+    game_world.add_collision_pair('main_character:monster', skeleton, None)
+    game_world.add_collision_pair('atk:monster', skeleton, None)
+
+    if monster_count > 5:
+        game_world.add_collision_pair('ghost:skeleton', ghost, None)
+        game_world.add_collision_pair('ghost:skeleton', None, skeleton)
+
+        game_world.add_collision_pair('slime:skeleton', None, slime)
+        game_world.add_collision_pair('slime:skeleton', skeleton, None)
+
+        game_world.add_collision_pair('ghost:slime', slime, None)
+        game_world.add_collision_pair('ghost:slime', None, ghost)

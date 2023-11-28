@@ -46,7 +46,7 @@ def remove_object(o):
             remove_collision_object(o) # 충돌 그룹에서 삭제 완료
             del o # 객체자체를 완전히 메모리에서 제거
             return
-    raise ValueError('Cannot delete non existing object')
+    #raise ValueError('Cannot delete non existing object')
 
 
 def clear():
