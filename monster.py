@@ -72,6 +72,7 @@ class Ghost:
             self.hp -= play_mode.main_character.atk
 
             if self.hp <= 0:
+                play_mode.main_character.Exp += 10
                 game_world.remove_object(self)
         elif group == 'ghost:slime':
             game_world.remove_object(self)
@@ -167,6 +168,7 @@ class Slime:
             self.hp -= play_mode.main_character.atk
 
             if self.hp <= 0:
+                play_mode.main_character.Exp += 10
                 game_world.remove_object(self)
         elif group == 'ghost:slime':
             slime_slime = Slime_Slime(self)
@@ -261,6 +263,7 @@ class Skeleton:
             self.last_collision_time = current_time
             self.hp -= play_mode.main_character.atk
             if self.hp <= 0:
+                play_mode.main_character.Exp +=10
                 game_world.remove_object(self)
         elif group == 'slime:skeleton':
             slime_skeleton = Sliem_Skeleton(self)

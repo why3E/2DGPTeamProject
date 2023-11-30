@@ -70,7 +70,7 @@ class Skeleton_ghost:
             self.hp -= play_mode.main_character.atk
 
             if self.hp <= 0:
-
+                play_mode.main_character.Exp += 20
                 game_world.remove_object(self)
 
     def set_target_location(self, x=None, y=None):
@@ -158,6 +158,7 @@ class Slime_Slime:
             self.hp -= play_mode.main_character.atk
 
             if self.hp <= 0:
+                play_mode.main_character.Exp += 20
                 game_world.remove_object(self)
 
     def set_target_location(self, x=None, y=None):
@@ -243,6 +244,7 @@ class Sliem_Skeleton:
             self.last_collision_time = current_time
             self.hp -= play_mode.main_character.atk
             if self.hp <= 0:
+                play_mode.main_character.Exp += 20
                 game_world.remove_object(self)
         elif group == 'monster:monster':
             if(self.x**2 + self.y**2 > other.x**2+other.y**2):

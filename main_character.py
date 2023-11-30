@@ -205,7 +205,7 @@ class Main_Character:
         self.atk = 6
         self.level = 1
         # 경험치 최대량은 level*100 이런식으로 구상
-        self.Exp = 10  # 경험치를 채운 정도
+        self.Exp = 0  # 경험치를 채운 정도
         self.damage = 10
 
         self.PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
@@ -230,10 +230,10 @@ class Main_Character:
     def update(self):
 
         if play_mode.play_check == True:
-            if self.Exp == 100:
+            if self.Exp >= 100:
                 game_framework.push_mode(item_mode)
+                self.Exp %= 100
                 self.level += 1
-                self.Exp = 0
             self.state_machine.update()
         else:
             self.right_move = 0
@@ -253,7 +253,7 @@ class Main_Character:
     def draw(self):
         self.state_machine.draw()
         self.exp_bar_image.clip_draw(0, 0, 49, 6, 400, 800 - 25, 400 + 15, 50)
-        self.exp_image.clip_draw(0, 0, 49, 6, 400 + (self.Exp - 100) * 2, 800 - 25, self.Exp * 4, 32)
+        self.exp_image.clip_draw(0, 0, 49, 6, 400 + (self.Exp - 100) * 2, 800 - 25, (self.Exp * 4), 32)
 
 
     # fill here
