@@ -90,3 +90,45 @@ class Amor:
 
     def draw(self):pass
     def update(self):pass
+
+class Meat:
+    Meat_image = None
+    def __init__(self):
+        if Meat.Meat_image is None:
+            Meat.Meat_image = load_image('source/meat.png')
+
+    def draw(self):pass
+    def update(self):pass
+
+
+class Coin:
+    image1 = None
+    image2 = None
+    def __init__(self, other,type):
+        if Coin.image1 == None:
+            Coin.image1 = load_image('source/coin.png')
+            Coin.image2 = load_image('source/coins.png')
+        self.image = self.set_image(type)
+        self.x = other.x
+        self.y = other.y
+        self.size = 10
+
+    def update(self):
+        pass
+    def draw(self):
+            self.image.draw(self.x, self.y, 20, 20)
+
+    # fill here
+    def get_bb(self):
+        return self.x - self.size, self.y - self.size, self.x + self.size, self.y + self.size
+
+    def handle_collision(self, group, other):
+        if group == 'Main:Coin':
+            play_mode.main_character.Exp += 20
+            game_world.remove_object(self)
+
+    def set_image(self,type):
+        if type == 'monster':
+            return Coin.image1
+        elif type =='middle_monster':
+            return Coin.image2

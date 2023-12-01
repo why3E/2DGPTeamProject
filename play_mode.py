@@ -33,15 +33,15 @@ def init():
     global paturn_time
     global elapsed_time
     global monster_count
-    monster_count = 1
+    monster_count = 10
     play_check = True
     start_time = get_time()+1
     elapsed_time = get_time()+1
-    paturn_time = 3
+    paturn_time = 2
     main_character = Main_Character()
     game_world.add_object(main_character, 1)
     game_world.add_collision_pair('main_character:monster', None, main_character)
-
+    game_world.add_collision_pair('Main:Coin', main_character, None)
     background = Background(main_character)
     game_world.add_object(background, 0)
     #메인 캐릭터 초기값을 json이나 피클로 초기화 해서 파일 읽어들이는 걸로 수정해야함

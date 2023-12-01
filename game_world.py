@@ -46,7 +46,7 @@ def remove_object(o):
             remove_collision_object(o) # 충돌 그룹에서 삭제 완료
             del o # 객체자체를 완전히 메모리에서 제거
             return
-    #raise ValueError('Cannot delete non existing object')
+    raise ValueError('Cannot delete non existing object')
 
 
 def clear():
@@ -88,3 +88,12 @@ def handle_collisions():
                 if collide(a, b):
                     a.handle_collision(group, b)
                     b.handle_collision(group, a)
+
+def add_object_pair(group, a, b):
+    if a not in objects:
+        print(f'Added new group {group}')
+        collision_pairs[group] = [[], []]
+    if a:  # a가 있을떄, 즉 a가 None이 아니면 추가
+        collision_pairs[group][0].append(a)
+    if b:  # b가 있을떄, 즉 b가 None이 아니면 추가
+        collision_pairs[group][1].append(b)

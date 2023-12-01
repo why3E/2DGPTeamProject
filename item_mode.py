@@ -21,7 +21,7 @@ def handle_events():
                     pannel.check+=1
                     pannel.check %=3
                 case pico2d.SDLK_SPACE:
-                    play_mode.main_character.level_up(pannel.item_random_choice[pannel.check])
+                    play_mode.main_character.level_up_item(pannel.item_random_choice[pannel.check])
                     game_framework.pop_mode()
 
 

@@ -54,3 +54,5 @@ class Pannel:
             pasive_item.Amor.Amor_image.draw(300, y, 50, 50)
         elif a == 'glove':
             pasive_item.Glove.Glove_image.draw(300, y, 50, 50)
+        elif a == 'meat':
+            pasive_item.Meat.Meat_image.draw(300, y, 50, 50)

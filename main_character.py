@@ -8,7 +8,7 @@ import item_mode
 import play_mode
 from atk_item import Sword, Swordline, Magic, Bow
 import game_world
-from pasive_item import Ring, Amor, Glove
+from pasive_item import Ring, Amor, Glove, Meat
 
 # 키 입력이 왔을때 각각 따로 키를 계산하지 않고 이미 한번 donw 눌림이 인식된 키는 up이 들어올떄까지 True로 인식시킨다.
 # 상하, 좌우 나눌필요는 없고 Run에서 이동값을 계산할때만 따로 반영하면 됨
@@ -106,13 +106,13 @@ class Run:
         main_character.dir2 = 0
 
         if check_move_down(main_character, e):
-            if (main_character.right_move == 2):
+            if main_character.right_move == 2:
                 main_character.dir, main_character.face_dir = 1, 1
-            elif (main_character.left_move == 2):
+            elif main_character.left_move == 2:
                 main_character.dir, main_character.face_dir = -1, -1
-            if (main_character.up_move == 2):
+            if main_character.up_move == 2:
                 main_character.dir2 = 1
-            elif (main_character.down_move == 2):
+            elif main_character.down_move == 2:
                 main_character.dir2 = -1
 
     @staticmethod
@@ -131,10 +131,10 @@ class Run:
 
     @staticmethod
     def draw(main_character):
-        if (main_character.face_dir == 1):
+        if main_character.face_dir == 1:
             main_character.image.clip_draw(int(main_character.frame) * 32, 0, 32, 64, main_character.x,
                                            main_character.y)
-        elif (main_character.face_dir == -1):
+        elif main_character.face_dir == -1:
             main_character.image.clip_composite_draw(int(main_character.frame) * 32, 0, 32, 64, 0, 'h',
                                                      main_character.x, main_character.y, 32, 64)
         main_character.hp_bar_image.clip_draw(0, 0, 46, 12, main_character.x, main_character.y - 50,
@@ -196,7 +196,7 @@ class Main_Character:
         self.exp_image = load_image('source/EXP_exp.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-        self.item = ['sword', 'magic', 'bow', 'ring', 'amor', 'glove']
+        self.item = ['sword', 'magic', 'bow', 'ring', 'amor', 'glove', 'meat']
         # 캐릭터 패시브
         self.hp = 50
         self.hp_max = 50
@@ -226,6 +226,7 @@ class Main_Character:
         self.ring = Ring()
         self.amor = Amor()
         self.glove = Glove()
+        self.meat = Meat()
 
     def update(self):
 
@@ -245,60 +246,53 @@ class Main_Character:
             self.dir2 = 0
             self.move_check = False
 
-
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
-
 
     def draw(self):
         self.state_machine.draw()
         self.exp_bar_image.clip_draw(0, 0, 49, 6, 400, 800 - 25, 400 + 15, 50)
         self.exp_image.clip_draw(0, 0, 49, 6, 400 + (self.Exp - 100) * 2, 800 - 25, (self.Exp * 4), 32)
 
-
     # fill here
     def get_bb(self):
         return self.x - self.size, self.y - self.size * 4, self.x + self.size, self.y + self.size - 5
-
 
     def handle_collision(self, group, other):
         if group == 'main_character:monster':
             self.hp -= 1
             pass
-    def level_up(self, a):
-        if a == 'bow': # 5렙이후에는 아이템 고르는 부분의 리스트에서 제거해서 애초에 넘어올 경우가 없게 만들 예정
-            self.bow.level += 1
-            if self.bow.level == 4:
-                self.item.remove('bow')
-            pass
-        if a == 'sword':
-            self.sword.level += 1
-            if self.sword.level == 4:
-                self.item.remove('sword')
-            pass
-        if a == 'magic':
-            self.magic.level += 1
-            if self.magic.level == 4:
-                self.item.remove('magic')
-            pass
-        if a == 'ring':
-            self.ring.level += 1
-            self.atk += 10
-            if self.magic.level == 4:
-                self.item.remove('ring')
-            pass
-        if a == 'amor':
-            self.amor.level += 1
-            self.hp_max += 20
-            self.hp += 20
 
-            if self.amor.level == 4:
-                self.item.remove('amor')
-            pass
-        if a == 'glove':
-            self.glove.level += 1
-            self.atk_speed = 1.0 - 0.1 * self.glove.level
+    def level_up_item(self, item_type):
+        items = {
+            'bow': {'attribute': self.bow, 'max_level': 4},
+            'sword': {'attribute': self.sword, 'max_level': 4},
+            'magic': {'attribute': self.magic, 'max_level': 4},
+            'ring': {'attribute': self.ring, 'max_level': float('inf'), 'atk_increase': 5},
+            'amor': {'attribute': self.amor, 'max_level': float('inf'), 'hp_increase': 20},
+            'glove': {'attribute': self.glove, 'max_level': 4, 'atk_speed_decrease': 0.1},
+            'meat': {'max_level': float('inf'), 'restore_hp': True}
+        }
 
-            if self.glove.level == 4:
-                self.item.remove('glove')
-            pass
+        if item_type in items:
+            item_info = items[item_type]
+
+            if 'attribute' in item_info:
+                attribute = item_info['attribute']
+                attribute.level += 1
+
+                if attribute.level == item_info.get('max_level', float('inf')):
+                    self.item.remove(item_type)
+
+            if 'atk_increase' in item_info:
+                self.atk += item_info['atk_increase']
+
+            if 'hp_increase' in item_info:
+                self.hp_max += item_info['hp_increase']
+                self.hp += item_info['hp_increase']
+
+            if 'atk_speed_decrease' in item_info:
+                self.atk_speed = 1.0 - item_info['atk_speed_decrease'] * attribute.level
+
+            if 'restore_hp' in item_info:
+                self.hp = self.hp_max
