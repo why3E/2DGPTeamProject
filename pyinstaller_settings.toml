@@ -1,0 +1,11 @@
+# 메인 파일 이름을 지정하세요.
+main_file = 'main.py'
+# 데이타 파일들을 지정하세요.
+data_files = ['bg_world_background.png','character_move.png','item_select.png','title.png','tuk_credit.png'
+]
+# 데이타가 들어있는 폴더들을 지정하세요.
+data_folders = [
+ 'source'
+]
+
+
