@@ -175,7 +175,7 @@ class StateMachine:
 
 class Main_Character:
     def __init__(self):
-        self.x, self.y = 400, 400
+        self.x, self.y = 600, 350
         self.frame = 0
         self.size = 10
         # 캐릭터의 이동 방향 확인
