@@ -190,7 +190,7 @@ class Main_Character:
         self.move_check = False
         # 얼굴 보는 방향
         self.face_dir = 1
-        self.image = load_image('character_move.png')
+        self.image = load_image('character.png')
         self.hp_bar_image = load_image('source/HP_bar.png')
         self.hp_image = load_image('source/HP_life.png')
         self.exp_bar_image = load_image('source/EXP_bar.png')
