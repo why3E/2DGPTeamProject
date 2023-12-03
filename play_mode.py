@@ -33,7 +33,7 @@ def init():
     global paturn_time
     global elapsed_time
     global monster_count
-    monster_count = 10
+    monster_count = 1
     play_check = True
     start_time = get_time()+1
     elapsed_time = get_time()+1

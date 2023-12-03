@@ -96,7 +96,6 @@ class Swordline:
                 Swordline.images['sword'][int(self.frame)].composite_draw(0, 'h', sx - self.size / 2,
                                                                           sy - self.pos,
                                                                           self.size, self.size)
-            draw_rectangle(*self.get_bb())
 
     def update(self):
         if play_mode.play_check == True:
@@ -188,7 +187,7 @@ class Magiccircle:
         sx = self.x - play_mode.background.window_left
         sy = self.y - play_mode.background.window_bottom
         self.images['cir'][int(self.frame)].clip_composite_draw(0, 0, 220, 220, 0, '', sx, sy, self.size, self.size)
-        draw_rectangle(*self.get_bb())
+
 
     def update(self):
         if play_mode.play_check == True:
@@ -280,7 +279,6 @@ class Arrow:
         sx = self.x - play_mode.background.window_left
         sy = self.y - play_mode.background.window_bottom
         self.images['arrow'][int(self.frame)].clip_composite_draw(0, 0, 96, 41, self.angle, '', sx, sy, 48, 20)
-        draw_rectangle(*self.get_bb())
 
     def update(self):
         if play_mode.play_check == True:

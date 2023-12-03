@@ -1,7 +1,7 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
 from pico2d import get_time, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, \
-    SDLK_DOWN, draw_rectangle, get_canvas_width, get_canvas_height
+    SDLK_DOWN, get_canvas_width, get_canvas_height
 
 import game_framework
 import item_mode
@@ -199,8 +199,8 @@ class Main_Character:
         self.state_machine.start()
         self.item = ['sword', 'magic', 'bow', 'ring', 'amor', 'glove', 'meat']
         # 캐릭터 패시브
-        self.hp = 500000000
-        self.hp_max = 5000000000
+        self.hp = 50
+        self.hp_max = 50
         self.atk_speed = 0.5
         self.move_speed = 1.0
         self.atk = 6
@@ -252,8 +252,8 @@ class Main_Character:
 
     def draw(self):
         self.state_machine.draw()
-        self.exp_bar_image.clip_draw(0, 0, 49, 6, 400, 800 - 25, 400 + 15, 50)
-        self.exp_image.clip_draw(0, 0, 49, 6, 400 + (self.Exp/self.level - 100) * 2, 800 - 25, (self.Exp/self.level * 4), 32)
+        self.exp_bar_image.clip_draw(0, 0, 49, 6, get_canvas_width()//2, get_canvas_height() - 25, 400 + 15, 50)
+        self.exp_image.clip_draw(0, 0, 49, 6, get_canvas_width()//2 + (self.Exp/self.level - 100) * 2, get_canvas_height() - 25, (self.Exp/self.level * 4), 32)
 
     # fill here
     def get_bb(self):
