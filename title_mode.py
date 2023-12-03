@@ -7,8 +7,10 @@ import play_mode
 
 
 def init():
-    global image
-    image = load_image('title.png')
+    global image,image2,image3
+    image = load_image('source/title_image.png')
+    image2 = load_image('source/start_UI.png')
+    image3 = load_image('source/start_button.png')
     pass
 
 
@@ -22,7 +24,9 @@ def update():
 
 def draw():
     clear_canvas()
-    image.draw(400, 400)
+    image.clip_draw(0,0,720,580,600,350,1200, 700)
+    image2.clip_draw(0,0,116,33,600,150,300,100)
+    image3.clip_draw(0,0,122,29,600,170,100,40)
     update_canvas()
     pass
 
@@ -33,7 +37,7 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
-        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_SPACE):
+        elif event.type == SDL_KEYDOWN:
             game_framework.change_mode(play_mode)
 
 def pause():

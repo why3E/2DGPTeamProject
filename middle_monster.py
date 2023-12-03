@@ -3,7 +3,7 @@ import game_framework
 from pico2d import *
 import game_world
 import play_mode
-from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
+from behavior_tree import BehaviorTree, Action, Sequence
 from pasive_item import Coin
 
 # zombie Run Speed
@@ -30,8 +30,6 @@ class Skeleton_ghost:
 
     def __init__(self, other):
         self.other = other
-        self.radius = 400
-        self.radians = random.randint(0, 360)
         self.x = self.other.x
         self.y = self.other.y
         self.load_images()
@@ -86,8 +84,6 @@ class Slime_Slime:
 
     def __init__(self, other):
         self.other = other
-        self.radius = 400
-        self.radians = random.randint(0, 360)
         self.x = self.other.x
         self.y = self.other.y
         self.load_images()
@@ -137,8 +133,6 @@ class Sliem_Skeleton:
 
     def __init__(self, other):
         self.hp = 25
-        self.radius = 400
-        self.radians = random.randint(0, 360)
         self.x = other.x
         self.y = other.y
         self.load_images()

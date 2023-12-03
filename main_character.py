@@ -230,8 +230,8 @@ class Main_Character:
 
     def update(self):
 
-        if play_mode.play_check == True:
-            if self.Exp >= 100:
+        if play_mode.play_check is True:
+            if self.Exp >= 100*self.level:
                 game_framework.push_mode(item_mode)
                 self.Exp %= 100
                 self.level += 1
@@ -252,7 +252,7 @@ class Main_Character:
     def draw(self):
         self.state_machine.draw()
         self.exp_bar_image.clip_draw(0, 0, 49, 6, 400, 800 - 25, 400 + 15, 50)
-        self.exp_image.clip_draw(0, 0, 49, 6, 400 + (self.Exp - 100) * 2, 800 - 25, (self.Exp * 4), 32)
+        self.exp_image.clip_draw(0, 0, 49, 6, 400 + (self.Exp/self.level - 100) * 2, 800 - 25, (self.Exp/self.level * 4), 32)
 
     # fill here
     def get_bb(self):
