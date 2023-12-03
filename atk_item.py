@@ -38,10 +38,12 @@ class Sword:
             Sword.image = Sword.image1
 
     def draw(self):
+        sx = self.x - play_mode.background.window_left
+        sy = self.y - play_mode.background.window_bottom
         if self.main_character.face_dir == 1:
-            Sword.image.draw(self.x + self.velocity, self.y - 10)
+            Sword.image.draw(sx + self.velocity, sy - 10)
         else:
-            Sword.image.clip_composite_draw(0, 0, 32, 32, 0, 'h', self.x + self.velocity, self.y - 10, 32, 32)
+            Sword.image.clip_composite_draw(0, 0, 32, 32, 0, 'h', sx + self.velocity, sy - 10, 32, 32)
 
     def update(self):
         if play_mode.play_check ==True:
@@ -84,13 +86,15 @@ class Swordline:
                 Swordline.images[name] = [load_image("source/" + name + " (%d)" % i + ".png") for i in range(1, 4)]
 
     def draw(self):
+        sx = self.x - play_mode.background.window_left
+        sy = self.y - play_mode.background.window_bottom
         if int(self.frame) < 3 and self.count == 0:
             if (self.main_character.face_dir == 1):
-                Swordline.images['sword'][int(self.frame)].draw(self.x + self.size / 2, self.y - self.pos,
+                Swordline.images['sword'][int(self.frame)].draw(sx + self.size / 2, sy - self.pos,
                                                                 self.size, self.size)
             elif (self.main_character.face_dir == -1):
-                Swordline.images['sword'][int(self.frame)].composite_draw(0, 'h', self.x - self.size / 2,
-                                                                          self.y - self.pos,
+                Swordline.images['sword'][int(self.frame)].composite_draw(0, 'h', sx - self.size / 2,
+                                                                          sy - self.pos,
                                                                           self.size, self.size)
             draw_rectangle(*self.get_bb())
 
@@ -172,7 +176,7 @@ class Magiccircle:
         self.FRAMES_PER_ACTION = 4.0
         self.size = 50
         self.frame = 0
-        self.x,self.y = random.randint(100, 700),random.randint(100, 700)
+        self.x,self.y = play_mode.main_character.x +random.randint(-400, 400),play_mode.main_character.y +random.randint(-400, 400)
         if Magiccircle.images is None:
             Magiccircle.images = {}
             for name in animation_names_two:
@@ -180,7 +184,10 @@ class Magiccircle:
 
 
     def draw(self):
-        self.images['cir'][int(self.frame)].clip_composite_draw(0, 0, 220, 220, 0, '', self.x, self.y, self.size, self.size)
+
+        sx = self.x - play_mode.background.window_left
+        sy = self.y - play_mode.background.window_bottom
+        self.images['cir'][int(self.frame)].clip_composite_draw(0, 0, 220, 220, 0, '', sx, sy, self.size, self.size)
         draw_rectangle(*self.get_bb())
 
     def update(self):
@@ -270,7 +277,9 @@ class Arrow:
         self.frame = random.randint(0, 2)
 
     def draw(self):
-        self.images['arrow'][int(self.frame)].clip_composite_draw(0, 0, 96, 41, self.angle, '', self.x, self.y, 48, 20)
+        sx = self.x - play_mode.background.window_left
+        sy = self.y - play_mode.background.window_bottom
+        self.images['arrow'][int(self.frame)].clip_composite_draw(0, 0, 96, 41, self.angle, '', sx, sy, 48, 20)
         draw_rectangle(*self.get_bb())
 
     def update(self):
@@ -281,7 +290,11 @@ class Arrow:
             self.frame = (self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 3
 
             # 화살이 일정 거리 이상 날아가면 제거
-            if self.x > 800 or self.x < 0 or self.y < 0 or self.y > 800:
+
+            sx = self.x - play_mode.background.window_left
+            sy = self.y - play_mode.background.window_bottom
+
+            if sx > 900 or sx < 0 or sy < 0 or sy > 900:
                 game_world.remove_object(self)
 
     def get_bb(self):

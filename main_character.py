@@ -1,7 +1,7 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
-from pico2d import get_time, clamp, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, \
-    SDLK_DOWN, draw_rectangle
+from pico2d import get_time, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, \
+    SDLK_DOWN, draw_rectangle, get_canvas_width, get_canvas_height
 
 import game_framework
 import item_mode
@@ -87,15 +87,16 @@ class Idle:
 
     @staticmethod
     def draw(main_character):
+        sx, sy = get_canvas_width() // 2, get_canvas_height() // 2
         if (main_character.face_dir == 1):
-            main_character.image.clip_draw(0, 0, 32, 64, main_character.x, main_character.y)
+            main_character.image.clip_draw(0, 0, 32, 64, sx, sy)
         elif (main_character.face_dir == -1):
-            main_character.image.clip_composite_draw(0, 0, 32, 64, 0, 'h', main_character.x, main_character.y, 32, 64)
-        main_character.hp_bar_image.clip_draw(0, 0, 46, 12, main_character.x, main_character.y - 50,
+            main_character.image.clip_composite_draw(0, 0, 32, 64, 0, 'h', sx, sy, 32, 64)
+        main_character.hp_bar_image.clip_draw(0, 0, 46, 12, sx, sy - 50,
                                               main_character.hp_max + 6, 12)
         main_character.hp_image.clip_draw(0, 0, 30, 6,
-                                          main_character.x + (main_character.hp - main_character.hp_max) / 2,
-                                          main_character.y - 50, main_character.hp,
+                                          sx + (main_character.hp - main_character.hp_max) / 2,
+                                          sy - 50, main_character.hp,
                                           6)
 
 
@@ -124,24 +125,22 @@ class Run:
         main_character.frame = (
                                        main_character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         main_character.x += main_character.dir * main_character.RUN_SPEED_PPS * game_framework.frame_time
-        main_character.x = clamp(25, main_character.x, 800 - 25)
         main_character.y += main_character.dir2 * main_character.RUN_SPEED_PPS * game_framework.frame_time
-        main_character.y = clamp(30, main_character.y, 800 - 30)
         pass
 
     @staticmethod
     def draw(main_character):
+        sx, sy = get_canvas_width() // 2, get_canvas_height() // 2
         if main_character.face_dir == 1:
-            main_character.image.clip_draw(int(main_character.frame) * 32, 0, 32, 64, main_character.x,
-                                           main_character.y)
+            main_character.image.clip_draw(int(main_character.frame) * 32, 0, 32, 64, sx,sy)
         elif main_character.face_dir == -1:
             main_character.image.clip_composite_draw(int(main_character.frame) * 32, 0, 32, 64, 0, 'h',
-                                                     main_character.x, main_character.y, 32, 64)
-        main_character.hp_bar_image.clip_draw(0, 0, 46, 12, main_character.x, main_character.y - 50,
+                                                     sx,sy, 32, 64)
+        main_character.hp_bar_image.clip_draw(0, 0, 46, 12, sx, sy - 50,
                                               main_character.hp_max + 6, 12)
         main_character.hp_image.clip_draw(0, 0, 30, 6,
-                                          main_character.x + (main_character.hp - main_character.hp_max) / 2,
-                                          main_character.y - 50, main_character.hp,
+                                          sx + (main_character.hp - main_character.hp_max) / 2,
+                                          sy - 50, main_character.hp,
                                           6)
 
 
@@ -160,6 +159,7 @@ class StateMachine:
     def update(self):
         self.cur_state.do(self.main_character)
 
+
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
             if check_event(self.main_character, e):
@@ -175,7 +175,8 @@ class StateMachine:
 
 class Main_Character:
     def __init__(self):
-        self.x, self.y = 600, 350
+        self.x = play_mode.background.w // 2
+        self.y = play_mode.background.h // 2
         self.frame = 0
         self.size = 10
         # 캐릭터의 이동 방향 확인
@@ -198,8 +199,8 @@ class Main_Character:
         self.state_machine.start()
         self.item = ['sword', 'magic', 'bow', 'ring', 'amor', 'glove', 'meat']
         # 캐릭터 패시브
-        self.hp = 50
-        self.hp_max = 50
+        self.hp = 500000000
+        self.hp_max = 5000000000
         self.atk_speed = 0.5
         self.move_speed = 1.0
         self.atk = 6

@@ -116,7 +116,9 @@ class Coin:
     def update(self):
         pass
     def draw(self):
-            self.image.draw(self.x, self.y, 20, 20)
+        sx = self.x - play_mode.background.window_left
+        sy = self.y - play_mode.background.window_bottom
+        self.image.draw(sx, sy, 20, 20)
 
     # fill here
     def get_bb(self):

@@ -52,10 +52,12 @@ class Skeleton_ghost:
             pass
 
     def draw(self):
+        sx = self.x - play_mode.background.window_left
+        sy = self.y - play_mode.background.window_bottom
         if math.cos(self.dir) >= 0:
-            self.image.clip_composite_draw(int(self.frame) * 49, 0, 49, 48, 0, 'h', self.x, self.y, 50, 50)
+            self.image.clip_composite_draw(int(self.frame) * 49, 0, 49, 48, 0, 'h', sx, sy, 50, 50)
         else:
-            self.image.clip_draw(int(self.frame) * 49, 0, 49, 48, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame) * 49, 0, 49, 48, sx, sy, 50, 50)
         draw_rectangle(*self.get_bb())
 
     # fill here
@@ -105,10 +107,12 @@ class Slime_Slime:
             self.bt.run()
 
     def draw(self):
+        sx = self.x - play_mode.background.window_left
+        sy = self.y - play_mode.background.window_bottom
         if math.cos(self.dir) >= 0:
-            self.image.clip_composite_draw(int(self.frame) * 52, 0, 52, 55, 0, 'h', self.x, self.y, 40, 40)
+            self.image.clip_composite_draw(int(self.frame) * 52, 0, 52, 55, 0, 'h', sx, sy, 40, 40)
         else:
-            self.image.clip_draw(int(self.frame) * 52, 0, 52, 55, self.x, self.y, 40, 40)
+            self.image.clip_draw(int(self.frame) * 52, 0, 52, 55, sx, sy, 40, 40)
         draw_rectangle(*self.get_bb())
 
     # fill here
@@ -158,10 +162,12 @@ class Sliem_Skeleton:
             self.bt.run()
 
     def draw(self):
+        sx = self.x - play_mode.background.window_left
+        sy = self.y - play_mode.background.window_bottom
         if math.cos(self.dir) >= 0:
-            self.image.clip_composite_draw(int(self.frame) * 56, 0, 56, 46, 0, 'h', self.x, self.y, 50, 50)
+            self.image.clip_composite_draw(int(self.frame) * 56, 0, 56, 46, 0, 'h', sx, sy, 50, 50)
         else:
-            self.image.clip_draw(int(self.frame) * 56, 0, 56, 46, self.x, self.y, 50, 50)
+            self.image.clip_draw(int(self.frame) * 56, 0, 56, 46, sx, sy, 50, 50)
         draw_rectangle(*self.get_bb())
 
     # fill here

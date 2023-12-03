@@ -23,11 +23,11 @@ SKELETON_FRAMES_PER_ACTION = 4.0
 
 def random_position(self):
     if self.position == 0:
-        self.x = random.randint(0, 800)
-        self.y = random.choice([0, 800])
+        self.x = play_mode.main_character.x+ random.randint(-450,450)
+        self.y = play_mode.main_character.y  + random.choice([-450, 450])
     elif self.position == 1:
-        self.x = random.choice([0, 800])
-        self.y = random.randint(0, 800)
+        self.x = play_mode.main_character.x + random.choice([-450, 450])
+        self.y = play_mode.main_character.y + random.randint(-450, 450)
 
 class Ghost:
     image = None
@@ -66,10 +66,12 @@ class Ghost:
             pass
 
     def draw(self):
+        sx = self.x - play_mode.background.window_left
+        sy = self.y - play_mode.background.window_bottom
         if math.cos(self.dir) >= 0:
-            self.image.clip_composite_draw(int(self.frame) * 32, 0, 32, 32, 0, 'h', self.x, self.y, 32, 32)
+            self.image.clip_composite_draw(int(self.frame) * 32, 0, 32, 32, 0, 'h', sx, sy, 32, 32)
         else:
-            self.image.clip_draw(int(self.frame) * 32, 0, 32, 32, self.x, self.y, 32, 32)
+            self.image.clip_draw(int(self.frame) * 32, 0, 32, 32, sx, sy, 32, 32)
         draw_rectangle(*self.get_bb())
 
     # fill here
@@ -136,10 +138,12 @@ class Slime:
             self.bt.run()
 
     def draw(self):
+        sx = self.x - play_mode.background.window_left
+        sy = self.y - play_mode.background.window_bottom
         if math.cos(self.dir) >= 0:
-            self.image.clip_composite_draw(int(self.frame) * 28, 0, 28, 25, 0, 'h', self.x, self.y, 32, 32)
+            self.image.clip_composite_draw(int(self.frame) * 28, 0, 28, 25, 0, 'h', sx, sy, 32, 32)
         else:
-            self.image.clip_draw(int(self.frame) * 28, 0, 28, 25, self.x, self.y, 32, 32)
+            self.image.clip_draw(int(self.frame) * 28, 0, 28, 25, sx, sy, 32, 32)
         draw_rectangle(*self.get_bb())
 
     # fill here
@@ -202,10 +206,12 @@ class Skeleton:
             # fill here
             self.bt.run()
     def draw(self):
+        sx = self.x - play_mode.background.window_left
+        sy = self.y - play_mode.background.window_bottom
         if math.cos(self.dir) >= 0:
-            self.image.clip_composite_draw(int(self.frame) * 35, 0, 35, 36, 0, 'h', self.x, self.y, 32, 32)
+            self.image.clip_composite_draw(int(self.frame) * 35, 0, 35, 36, 0, 'h', sx, sy, 32, 32)
         else:
-            self.image.clip_draw(int(self.frame) * 35, 0, 35, 36, self.x, self.y, 32, 32)
+            self.image.clip_draw(int(self.frame) * 35, 0, 35, 36, sx, sy, 32, 32)
         draw_rectangle(*self.get_bb())
 
     # fill here
