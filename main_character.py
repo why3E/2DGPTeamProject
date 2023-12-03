@@ -205,6 +205,8 @@ class Main_Character:
         self.move_speed = 1.0
         self.atk = 6
         self.level = 1
+        self.invulnerable_time = 0.1  # 무적 상태 지속 시간 - 캐릭터 공격속도로 지정하면 될듯?
+        self.last_collision_time = 0.0
         # 경험치 최대량은 level*100 이런식으로 구상
         self.Exp = 0  # 경험치를 채운 정도
         self.damage = 10
@@ -260,8 +262,10 @@ class Main_Character:
         return self.x - self.size, self.y - self.size * 4, self.x + self.size, self.y + self.size - 5
 
     def handle_collision(self, group, other):
-        if group == 'main_character:monster':
-            self.hp -= 1
+        current_time = get_time()
+        if group == 'main_character:monster' and current_time - self.last_collision_time > self.invulnerable_time:
+            self.last_collision_time = current_time
+            self.hp -= play_mode.main_character.atk
             pass
 
     def level_up_item(self, item_type):

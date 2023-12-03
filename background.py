@@ -1,4 +1,4 @@
-from pico2d import load_image, get_canvas_width, get_canvas_height, clamp
+from pico2d import load_image, get_canvas_width, get_canvas_height, clamp, load_music
 
 import play_mode
 
@@ -10,7 +10,9 @@ class Background:
         self.ch = get_canvas_height()
         self.w = self.image.w
         self.h = self.image.h
-
+        self.bgm = load_music('source/battle_bgm.mp3')
+        self.bgm.set_volume(48)
+        self.bgm.repeat_play()
     def draw(self):
         self.image.clip_draw_to_origin(self.q3l, self.q3b, self.q3w, self.q3h, 0, 0)  # quadrant 3
         self.image.clip_draw_to_origin(self.q2l, self.q2b, self.q2w, self.q2h, 0, self.q3h)  # quadrant 2

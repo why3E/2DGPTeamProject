@@ -23,10 +23,14 @@ SKELETON_FRAMES_PER_ACTION = 4.0
 
 class Skeleton_ghost:
     image = None
+    death_sound = None
 
     def load_images(self):
         if Skeleton_ghost.image is None:
             Skeleton_ghost.image = load_image('source/skeleton_ghost.png')
+        if Skeleton_ghost.death_sound is None:
+            Skeleton_ghost.death_sound = load_wav('source/ghost.wav')
+            Skeleton_ghost.death_sound.set_volume(16)
 
     def __init__(self, other):
         self.other = other
@@ -58,7 +62,6 @@ class Skeleton_ghost:
             self.image.clip_composite_draw(int(self.frame) * 49, 0, 49, 48, 0, 'h', sx, sy, 50, 50)
         else:
             self.image.clip_draw(int(self.frame) * 49, 0, 49, 48, sx, sy, 50, 50)
-        draw_rectangle(*self.get_bb())
 
     # fill here
     def get_bb(self):
@@ -71,6 +74,7 @@ class Skeleton_ghost:
             self.hp -= play_mode.main_character.atk
 
             if self.hp <= 0:
+                Skeleton_ghost.death_sound.play()
                 coin = Coin(self, 'middle_monster')
                 game_world.add_object(coin, 1)
                 game_world.add_collision_pair('Main:Coin', None, coin)
@@ -79,10 +83,14 @@ class Skeleton_ghost:
 
 class Slime_Slime:
     image = None
+    death_sound = None
 
     def load_images(self):
         if Slime_Slime.image is None:
             Slime_Slime.image = load_image('source/slime_slime.png')
+        if Slime_Slime.death_sound is None:
+            Slime_Slime.death_sound = load_wav('source/slime_slime.wav')
+            Slime_Slime.death_sound.set_volume(16)
 
     def __init__(self, other):
         self.other = other
@@ -113,7 +121,6 @@ class Slime_Slime:
             self.image.clip_composite_draw(int(self.frame) * 52, 0, 52, 55, 0, 'h', sx, sy, 40, 40)
         else:
             self.image.clip_draw(int(self.frame) * 52, 0, 52, 55, sx, sy, 40, 40)
-        draw_rectangle(*self.get_bb())
 
     # fill here
     def get_bb(self):
@@ -126,6 +133,7 @@ class Slime_Slime:
             self.hp -= play_mode.main_character.atk
 
             if self.hp <= 0:
+                Slime_Slime.death_sound.play()
                 coin = Coin(self, 'middle_monster')
                 game_world.add_object(coin, 1)
                 game_world.add_collision_pair('Main:Coin', None, coin)
@@ -134,6 +142,7 @@ class Slime_Slime:
 
 class Sliem_Skeleton:
     image = None
+    death_sound = None
 
     def __init__(self, other):
         self.hp = 25
@@ -153,6 +162,9 @@ class Sliem_Skeleton:
     def load_images(self):
         if Sliem_Skeleton.image is None:
             Sliem_Skeleton.image = load_image('source/slime_skeleton.png')
+        if Sliem_Skeleton.death_sound is None:
+            Sliem_Skeleton.death_sound = load_wav('source/skeleton2.wav')
+            Sliem_Skeleton.death_sound.set_volume(16)
 
     def update(self):
         if play_mode.play_check is True:
@@ -168,7 +180,6 @@ class Sliem_Skeleton:
             self.image.clip_composite_draw(int(self.frame) * 56, 0, 56, 46, 0, 'h', sx, sy, 50, 50)
         else:
             self.image.clip_draw(int(self.frame) * 56, 0, 56, 46, sx, sy, 50, 50)
-        draw_rectangle(*self.get_bb())
 
     # fill here
     def get_bb(self):
@@ -180,6 +191,7 @@ class Sliem_Skeleton:
             self.last_collision_time = current_time
             self.hp -= play_mode.main_character.atk
             if self.hp <= 0:
+                Sliem_Skeleton.death_sound.play()
                 coin = Coin(self, 'middle_monster')
                 game_world.add_object(coin, 1)
                 game_world.add_collision_pair('Main:Coin', None, coin)

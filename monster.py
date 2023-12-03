@@ -21,27 +21,31 @@ GHOST_FRAMES_PER_ACTION = 4.0
 SLIME_FRAMES_PER_ACTION = 7.0
 SKELETON_FRAMES_PER_ACTION = 4.0
 
+
 def random_position(self):
     if self.position == 0:
-        self.x = play_mode.main_character.x+ random.randint(-450,450)
-        self.y = play_mode.main_character.y  + random.choice([-450, 450])
+        self.x = play_mode.main_character.x + random.randint(-450, 450)
+        self.y = play_mode.main_character.y + random.choice([-450, 450])
     elif self.position == 1:
         self.x = play_mode.main_character.x + random.choice([-450, 450])
         self.y = play_mode.main_character.y + random.randint(-450, 450)
 
+
 class Ghost:
     image = None
-    dead_image = None
+    death_sound = None
 
     def load_images(self):
-        if Ghost.image == None:
+        if Ghost.image is None:
             Ghost.image = load_image('source/ghost_AT.png')
-            Ghost.dead_image = load_image('source/ghost_HURT.png')
+        if Ghost.death_sound is None:
+            Ghost.death_sound = load_wav('source/ghost.wav')
+            Ghost.death_sound.set_volume(16)
 
     def __init__(self):
         self.radius = 400
         self.radians = random.randint(0, 360)
-        self.position = random.choice([0,1])
+        self.position = random.choice([0, 1])
         self.x = 0
         self.y = 0
         random_position(self)
@@ -55,6 +59,7 @@ class Ghost:
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
         self.bt = None
+
         behavior_tree(self)
 
     def update(self):
@@ -72,7 +77,6 @@ class Ghost:
             self.image.clip_composite_draw(int(self.frame) * 32, 0, 32, 32, 0, 'h', sx, sy, 32, 32)
         else:
             self.image.clip_draw(int(self.frame) * 32, 0, 32, 32, sx, sy, 32, 32)
-        draw_rectangle(*self.get_bb())
 
     # fill here
     def get_bb(self):
@@ -87,6 +91,7 @@ class Ghost:
                 self.hp -= play_mode.main_character.atk
 
                 if self.hp <= 0:
+                    Ghost.death_sound.play()
                     coin = Coin(self, 'monster')
                     game_world.add_object(coin, 1)
                     game_world.add_collision_pair('Main:Coin', None, coin)
@@ -105,10 +110,14 @@ class Ghost:
 
 class Slime:
     image = None
+    death_sound = None
 
     def load_images(self):
         if Slime.image == None:
             Slime.image = load_image('source/slime_2.png')
+        if Slime.death_sound is None:
+            Slime.death_sound = load_wav('source/slime.wav')
+            Slime.death_sound.set_volume(20)
 
     def __init__(self):
         self.radius = 400
@@ -144,7 +153,6 @@ class Slime:
             self.image.clip_composite_draw(int(self.frame) * 28, 0, 28, 25, 0, 'h', sx, sy, 32, 32)
         else:
             self.image.clip_draw(int(self.frame) * 28, 0, 28, 25, sx, sy, 32, 32)
-        draw_rectangle(*self.get_bb())
 
     # fill here
     def get_bb(self):
@@ -158,6 +166,7 @@ class Slime:
                 self.hp -= play_mode.main_character.atk
 
                 if self.hp <= 0:
+                    Slime.death_sound.play()
                     coin = Coin(self, 'monster')
                     game_world.add_object(coin, 1)
                     game_world.add_collision_pair('Main:Coin', None, coin)
@@ -175,10 +184,14 @@ class Slime:
 
 class Skeleton:
     image = None
+    death_sound = None
 
     def load_images(self):
         if Skeleton.image == None:
             Skeleton.image = load_image('source/skeleton.png')
+        if Skeleton.death_sound is None:
+            Skeleton.death_sound = load_wav('source/skeleton.wav')
+            Skeleton.death_sound.set_volume(16)
 
     def __init__(self):
         self.hp = 10
@@ -205,6 +218,7 @@ class Skeleton:
                                  self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
             # fill here
             self.bt.run()
+
     def draw(self):
         sx = self.x - play_mode.background.window_left
         sy = self.y - play_mode.background.window_bottom
@@ -212,7 +226,6 @@ class Skeleton:
             self.image.clip_composite_draw(int(self.frame) * 35, 0, 35, 36, 0, 'h', sx, sy, 32, 32)
         else:
             self.image.clip_draw(int(self.frame) * 35, 0, 35, 36, sx, sy, 32, 32)
-        draw_rectangle(*self.get_bb())
 
     # fill here
     def get_bb(self):
@@ -226,6 +239,7 @@ class Skeleton:
                 self.last_collision_time = current_time
                 self.hp -= play_mode.main_character.atk
                 if self.hp <= 0:
+                    Skeleton.death_sound.play()
                     coin = Coin(self, 'monster')
                     game_world.add_object(coin, 1)
                     game_world.add_collision_pair('Main:Coin', None, coin)
@@ -273,7 +287,7 @@ def move_to_main_character(self, r=0.5):
 
 
 def behavior_tree(self):
-    a1 = Action('Set target location', set_target_location,self, 500, 50)  # action node 생성
+    a1 = Action('Set target location', set_target_location, self, 500, 50)  # action node 생성
     a2 = Action('Move to', move_to_main_character, self)
     root = SEQ_move_to_target_location = Sequence('Move to target location', a1, a2)
 

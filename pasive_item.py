@@ -104,10 +104,14 @@ class Meat:
 class Coin:
     image1 = None
     image2 = None
+    sound = None
     def __init__(self, other,type):
-        if Coin.image1 == None:
+        if Coin.image1 is None:
             Coin.image1 = load_image('source/coin.png')
             Coin.image2 = load_image('source/coins.png')
+        if Coin.sound is None:
+            Coin.sound = load_wav('source/coin.wav')
+            Coin.sound.set_volume(20)
         self.image = self.set_image(type)
         self.x = other.x
         self.y = other.y
@@ -126,6 +130,7 @@ class Coin:
 
     def handle_collision(self, group, other):
         if group == 'Main:Coin':
+            Coin.sound.play()
             play_mode.main_character.Exp += 20
             game_world.remove_object(self)
 

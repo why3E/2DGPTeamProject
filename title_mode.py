@@ -1,4 +1,5 @@
-from pico2d import get_events, load_image, clear_canvas, update_canvas, get_time, get_canvas_width, get_canvas_height
+from pico2d import get_events, load_image, clear_canvas, update_canvas, get_time, get_canvas_width, get_canvas_height, \
+    load_music
 from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE
 
 import game_framework
@@ -7,12 +8,17 @@ import play_mode
 
 
 def init():
-    global image,image2,image3,ch,cw
+    global image,image2,image3,ch,cw,bgm
     image = load_image('source/title_image.png')
     image2 = load_image('source/start_UI.png')
     image3 = load_image('source/start_button.png')
     cw = get_canvas_width()
     ch = get_canvas_height()
+
+    bgm = load_music('source/start_bgm.mp3')
+    bgm.set_volume(48)
+    bgm.repeat_play()
+
     pass
 
 
@@ -40,6 +46,7 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN:
+            bgm.stop()
             game_framework.change_mode(play_mode)
 
 def pause():

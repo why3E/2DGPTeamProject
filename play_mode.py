@@ -35,8 +35,8 @@ def init():
     global monster_count
     monster_count = 1
     play_check = True
-    start_time = get_time()+1
-    elapsed_time = get_time()+1
+    start_time = get_time() + 1
+    elapsed_time = get_time() + 1
     paturn_time = 2
 
     background = Background()
@@ -46,7 +46,9 @@ def init():
     game_world.add_object(main_character, 1)
     game_world.add_collision_pair('main_character:monster', None, main_character)
     game_world.add_collision_pair('Main:Coin', main_character, None)
-    #메인 캐릭터 초기값을 json이나 피클로 초기화 해서 파일 읽어들이는 걸로 수정해야함
+    # 메인 캐릭터 초기값을 json이나 피클로 초기화 해서 파일 읽어들이는 걸로 수정해야함
+
+
 def update():
     global start_time
     global paturn_time
@@ -62,15 +64,17 @@ def update():
 
     current_time = get_time()
 
-    if int(current_time-elapsed_time) >= 20:  # 100초가 경과했는지 확인
+    if int(current_time - elapsed_time) >= 20:  # 100초가 경과했는지 확인
         elapsed_time = current_time  # 경과 시간 초기화
-        monster_count+=1
-        print('패턴')# 패턴 주기를 10초로 변경
-
+        monster_count += 1
+        print('패턴')  # 패턴 주기를 10초로 변경
+        if monster_count == 14:
+            game_framework.change_mode(title_mode)
     if int((current_time - start_time) / paturn_time) > 0:
         start_time = current_time
         for i in range(monster_count):
             monster_make()
+
 
 def draw():
     clear_canvas()
@@ -93,6 +97,7 @@ def resume():
     global play_check
     play_check = True
     pass
+
 
 def monster_make():
     global monster_count
