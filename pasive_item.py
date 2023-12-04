@@ -34,7 +34,10 @@ class Ring:
             Ring.Ring_image = Ring.image1
 
     def draw(self):pass
-    def update(self):pass
+    def update(self):
+        if self.level in self.image_dict:
+            Ring.Ring_image = self.image_dict[self.level]
+        pass
 class Glove:
     Glove_image = None
     image1 = None
@@ -61,7 +64,10 @@ class Glove:
             Glove.Glove_image = Glove.image1
 
     def draw(self):pass
-    def update(self):pass
+    def update(self):
+        if self.level in self.image_dict:
+            Glove.Glove_image = self.image_dict[self.level]
+        pass
 
 class Amor:
     Amor_image = None
@@ -89,7 +95,10 @@ class Amor:
             Amor.Amor_image = Amor.image1
 
     def draw(self):pass
-    def update(self):pass
+    def update(self):
+        if self.level in self.image_dict:
+            Amor.Amor_image = self.image_dict[self.level]
+        pass
 
 class Meat:
     Meat_image = None

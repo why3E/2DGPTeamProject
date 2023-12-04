@@ -6,7 +6,7 @@ from pico2d import get_time, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK
 import game_framework
 import item_mode
 import play_mode
-from atk_item import Sword, Swordline, Magic, Bow
+from atk_item import Sword, Swordline, Magic, Bow, Magic2
 import game_world
 from pasive_item import Ring, Amor, Glove, Meat
 
@@ -197,15 +197,15 @@ class Main_Character:
         self.exp_image = load_image('source/EXP_exp.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-        self.item = ['sword', 'magic', 'bow', 'ring', 'amor', 'glove', 'meat']
+        self.item = ['sword', 'magic','magic2', 'bow', 'ring', 'amor', 'glove', 'meat']
         # 캐릭터 패시브
         self.hp = 50
         self.hp_max = 50
-        self.atk_speed = 0.5
+        self.atk_speed = 1.0
         self.move_speed = 1.0
         self.atk = 6
         self.level = 1
-        self.invulnerable_time = 0.1  # 무적 상태 지속 시간 - 캐릭터 공격속도로 지정하면 될듯?
+        self.invulnerable_time = 1.0
         self.last_collision_time = 0.0
         # 경험치 최대량은 level*100 이런식으로 구상
         self.Exp = 0  # 경험치를 채운 정도
@@ -226,9 +226,15 @@ class Main_Character:
         self.magic = Magic(self)
         game_world.add_object(self.magic, 1)
 
+        self.magic2 = Magic2(self)
+        game_world.add_object(self.magic2, 1)
+
         self.ring = Ring()
+        game_world.add_object(self.ring, 1)
         self.amor = Amor()
+        game_world.add_object(self.amor, 1)
         self.glove = Glove()
+        game_world.add_object(self.glove, 1)
         self.meat = Meat()
 
     def update(self):
@@ -273,6 +279,7 @@ class Main_Character:
             'bow': {'attribute': self.bow, 'max_level': 4},
             'sword': {'attribute': self.sword, 'max_level': 4},
             'magic': {'attribute': self.magic, 'max_level': 4},
+            'magic2': {'attribute': self.magic2, 'max_level': 4},
             'ring': {'attribute': self.ring, 'max_level': float('inf'), 'atk_increase': 5},
             'amor': {'attribute': self.amor, 'max_level': float('inf'), 'hp_increase': 20},
             'glove': {'attribute': self.glove, 'max_level': 4, 'atk_speed_decrease': 0.1},

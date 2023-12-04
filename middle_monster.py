@@ -41,27 +41,33 @@ class Skeleton_ghost:
         self.dir = random.choice([-1, 1])
         self.dir2 = random.choice([-1, 1])
         self.size = 25
-        self.hp = 20
+        self.hp = other.hp * 3
         self.invulnerable_time = play_mode.main_character.atk_speed  # 무적 상태 지속 시간 - 캐릭터 공격속도로 지정하면 될듯?
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
         self.bt = None
         behavior_tree(self)
-
+        self.should_draw = True  # draw 함수를 호출해야 할지 여부를 나타내는 변수
+        self.draw_timer = get_time()  # 타
     def update(self):
         if play_mode.play_check is True:
             self.frame = (
                                  self.frame + SKELETON_GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_GHOST_FRAMES_PER_ACTION
             self.bt.run()
+            current_time = get_time()
+            if current_time - self.draw_timer >= 3:
+                self.should_draw = not self.should_draw  # True와 False를 번갈아가면서 변경
+                self.draw_timer = current_time
             pass
 
     def draw(self):
-        sx = self.x - play_mode.background.window_left
-        sy = self.y - play_mode.background.window_bottom
-        if math.cos(self.dir) >= 0:
-            self.image.clip_composite_draw(int(self.frame) * 49, 0, 49, 48, 0, 'h', sx, sy, 50, 50)
-        else:
-            self.image.clip_draw(int(self.frame) * 49, 0, 49, 48, sx, sy, 50, 50)
+        if self.should_draw:
+            sx = self.x - play_mode.background.window_left
+            sy = self.y - play_mode.background.window_bottom
+            if math.cos(self.dir) >= 0:
+                self.image.clip_composite_draw(int(self.frame) * 49, 0, 49, 48, 0, 'h', sx, sy, 50, 50)
+            else:
+                self.image.clip_draw(int(self.frame) * 49, 0, 49, 48, sx, sy, 50, 50)
 
     # fill here
     def get_bb(self):
@@ -101,7 +107,7 @@ class Slime_Slime:
         self.dir = random.choice([-1, 1])
         self.dir2 = random.choice([-1, 1])
         self.size = 20
-        self.hp = 25
+        self.hp = other.hp * 4
         self.invulnerable_time = play_mode.main_character.atk_speed  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
@@ -152,7 +158,7 @@ class Sliem_Skeleton:
         self.frame = random.randint(0, 4)
         self.dir = random.choice([-1, 1])
         self.dir2 = random.choice([-1, 1])
-        self.size = 25
+        self.size = other.hp * 5
         self.invulnerable_time = play_mode.main_character.atk_speed  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000

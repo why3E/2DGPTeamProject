@@ -57,3 +57,5 @@ class Pannel:
             pasive_item.Glove.Glove_image.draw(self.cw, y, 50, 50)
         elif a == 'meat':
             pasive_item.Meat.Meat_image.draw(self.cw, y, 50, 50)
+        elif a == 'magic2':
+            atk_item.Magic2.Magic2_image.draw(self.cw, y, 50, 50)

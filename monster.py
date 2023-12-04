@@ -42,7 +42,7 @@ class Ghost:
             Ghost.death_sound = load_wav('source/ghost.wav')
             Ghost.death_sound.set_volume(16)
 
-    def __init__(self):
+    def __init__(self,hp):
         self.radius = 400
         self.radians = random.randint(0, 360)
         self.position = random.choice([0, 1])
@@ -54,7 +54,7 @@ class Ghost:
         self.dir = random.choice([-1, 1])
         self.dir2 = random.choice([-1, 1])
         self.size = 16
-        self.hp = 10
+        self.hp = hp
         self.invulnerable_time = play_mode.main_character.atk_speed  # 무적 상태 지속 시간 - 캐릭터 공격속도로 지정하면 될듯?
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
@@ -119,7 +119,7 @@ class Slime:
             Slime.death_sound = load_wav('source/slime.wav')
             Slime.death_sound.set_volume(20)
 
-    def __init__(self):
+    def __init__(self,hp):
         self.radius = 400
         self.radians = random.randint(0, 360)
         self.position = random.choice([0, 1])
@@ -131,7 +131,7 @@ class Slime:
         self.dir = random.choice([-1, 1])
         self.dir2 = random.choice([-1, 1])
         self.size = 16
-        self.hp = 10
+        self.hp = hp
         self.invulnerable_time = play_mode.main_character.atk_speed  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
@@ -193,8 +193,8 @@ class Skeleton:
             Skeleton.death_sound = load_wav('source/skeleton.wav')
             Skeleton.death_sound.set_volume(16)
 
-    def __init__(self):
-        self.hp = 10
+    def __init__(self,hp):
+        self.hp = hp
         self.radius = 400
         self.radians = random.randint(0, 360)
         self.position = random.choice([0, 1])
