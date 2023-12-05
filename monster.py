@@ -3,6 +3,7 @@ import game_framework
 from pico2d import *
 import game_world
 import play_mode
+import server
 from behavior_tree import BehaviorTree, Action, Sequence
 from middle_monster import Slime_Slime, Sliem_Skeleton, Skeleton_ghost
 from pasive_item import Coin
@@ -24,11 +25,11 @@ SKELETON_FRAMES_PER_ACTION = 4.0
 
 def random_position(self):
     if self.position == 0:
-        self.x = play_mode.main_character.x + random.randint(-450, 450)
-        self.y = play_mode.main_character.y + random.choice([-450, 450])
+        self.x = server.main_character.x + random.randint(-450, 450)
+        self.y = server.main_character.y + random.choice([-450, 450])
     elif self.position == 1:
-        self.x = play_mode.main_character.x + random.choice([-450, 450])
-        self.y = play_mode.main_character.y + random.randint(-450, 450)
+        self.x = server.main_character.x + random.choice([-450, 450])
+        self.y = server.main_character.y + random.randint(-450, 450)
 
 
 class Ghost:
@@ -42,7 +43,7 @@ class Ghost:
             Ghost.death_sound = load_wav('source/ghost.wav')
             Ghost.death_sound.set_volume(16)
 
-    def __init__(self,hp):
+    def __init__(self, hp):
         self.radius = 400
         self.radians = random.randint(0, 360)
         self.position = random.choice([0, 1])
@@ -55,7 +56,7 @@ class Ghost:
         self.dir2 = random.choice([-1, 1])
         self.size = 16
         self.hp = hp
-        self.invulnerable_time = play_mode.main_character.atk_speed  # 무적 상태 지속 시간 - 캐릭터 공격속도로 지정하면 될듯?
+        self.invulnerable_time = 0.2  # 무적 상태 지속 시간 - 캐릭터 공격속도로 지정하면 될듯?
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
         self.bt = None
@@ -64,15 +65,15 @@ class Ghost:
 
     def update(self):
 
-        if play_mode.play_check == True:
+        if server.play_check is True:
             self.frame = (
                                  self.frame + GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % GHOST_FRAMES_PER_ACTION
             self.bt.run()
             pass
 
     def draw(self):
-        sx = self.x - play_mode.background.window_left
-        sy = self.y - play_mode.background.window_bottom
+        sx = self.x - server.background.window_left
+        sy = self.y - server.background.window_bottom
         if math.cos(self.dir) >= 0:
             self.image.clip_composite_draw(int(self.frame) * 32, 0, 32, 32, 0, 'h', sx, sy, 32, 32)
         else:
@@ -88,8 +89,11 @@ class Ghost:
         if self in game_world.objects[1]:
             if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
                 self.last_collision_time = current_time
-                self.hp -= play_mode.main_character.atk
-
+                self.hp -= server.main_character.atk
+                self.x -= RUN_SPEED_PPS * math.cos(
+                    self.dir) * game_framework.frame_time * server.main_character.hit_back
+                self.y -= RUN_SPEED_PPS * math.sin(
+                    self.dir) * game_framework.frame_time * server.main_character.hit_back
                 if self.hp <= 0:
                     Ghost.death_sound.play()
                     coin = Coin(self, 'monster')
@@ -119,7 +123,7 @@ class Slime:
             Slime.death_sound = load_wav('source/slime.wav')
             Slime.death_sound.set_volume(20)
 
-    def __init__(self,hp):
+    def __init__(self, hp):
         self.radius = 400
         self.radians = random.randint(0, 360)
         self.position = random.choice([0, 1])
@@ -132,7 +136,7 @@ class Slime:
         self.dir2 = random.choice([-1, 1])
         self.size = 16
         self.hp = hp
-        self.invulnerable_time = play_mode.main_character.atk_speed  # 무적 상태 지속 시간
+        self.invulnerable_time = 0.2  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
 
@@ -141,14 +145,14 @@ class Slime:
 
     def update(self):
 
-        if play_mode.play_check == True:
+        if server.play_check == True:
             self.frame = (
                                  self.frame + SLIME_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SLIME_FRAMES_PER_ACTION
             self.bt.run()
 
     def draw(self):
-        sx = self.x - play_mode.background.window_left
-        sy = self.y - play_mode.background.window_bottom
+        sx = self.x - server.background.window_left
+        sy = self.y - server.background.window_bottom
         if math.cos(self.dir) >= 0:
             self.image.clip_composite_draw(int(self.frame) * 28, 0, 28, 25, 0, 'h', sx, sy, 32, 32)
         else:
@@ -163,8 +167,11 @@ class Slime:
         if self in game_world.objects[1]:
             if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
                 self.last_collision_time = current_time
-                self.hp -= play_mode.main_character.atk
-
+                self.hp -= server.main_character.atk
+                self.x -= RUN_SPEED_PPS * math.cos(
+                    self.dir) * game_framework.frame_time * server.main_character.hit_back
+                self.y -= RUN_SPEED_PPS * math.sin(
+                    self.dir) * game_framework.frame_time * server.main_character.hit_back
                 if self.hp <= 0:
                     Slime.death_sound.play()
                     coin = Coin(self, 'monster')
@@ -193,7 +200,7 @@ class Skeleton:
             Skeleton.death_sound = load_wav('source/skeleton.wav')
             Skeleton.death_sound.set_volume(16)
 
-    def __init__(self,hp):
+    def __init__(self, hp):
         self.hp = hp
         self.radius = 400
         self.radians = random.randint(0, 360)
@@ -206,22 +213,22 @@ class Skeleton:
         self.dir = random.choice([-1, 1])
         self.dir2 = random.choice([-1, 1])
         self.size = 16
-        self.invulnerable_time = play_mode.main_character.atk_speed  # 무적 상태 지속 시간
+        self.invulnerable_time = 0.2  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
         self.bt = None
         behavior_tree(self)
 
     def update(self):
-        if play_mode.play_check == True:
+        if server.play_check is True:
             self.frame = (
                                  self.frame + SKELETON_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_FRAMES_PER_ACTION
             # fill here
             self.bt.run()
 
     def draw(self):
-        sx = self.x - play_mode.background.window_left
-        sy = self.y - play_mode.background.window_bottom
+        sx = self.x - server.background.window_left
+        sy = self.y - server.background.window_bottom
         if math.cos(self.dir) >= 0:
             self.image.clip_composite_draw(int(self.frame) * 35, 0, 35, 36, 0, 'h', sx, sy, 32, 32)
         else:
@@ -237,7 +244,13 @@ class Skeleton:
         if self in game_world.objects[1]:
             if group == 'atk:monster' and current_time - self.last_collision_time > self.invulnerable_time:
                 self.last_collision_time = current_time
-                self.hp -= play_mode.main_character.atk
+                self.hp -= server.main_character.atk
+
+                self.x -= RUN_SPEED_PPS * math.cos(
+                    self.dir) * game_framework.frame_time * server.main_character.hit_back
+                self.y -= RUN_SPEED_PPS * math.sin(
+                    self.dir) * game_framework.frame_time * server.main_character.hit_back
+
                 if self.hp <= 0:
                     Skeleton.death_sound.play()
                     coin = Coin(self, 'monster')
@@ -258,7 +271,7 @@ class Skeleton:
 def set_target_location(self, x=None, y=None):
     if not x or not y:
         raise ValueError("위치 지정을 해야합니다.")
-    self.tx, self.ty = play_mode.main_character.x, play_mode.main_character.x
+    self.tx, self.ty = server.main_character.x, server.main_character.x
     return BehaviorTree.SUCCESS
     pass
 
@@ -278,8 +291,8 @@ def move_slightly_to(self, tx, ty):
 
 
 def move_to_main_character(self, r=0.5):
-    move_slightly_to(self, play_mode.main_character.x, play_mode.main_character.y)
-    if distance_less_than(play_mode.main_character.x, play_mode.main_character.y, self.x, self.y, r):
+    move_slightly_to(self, server.main_character.x, server.main_character.y)
+    if distance_less_than(server.main_character.x, server.main_character.y, self.x, self.y, r):
         return BehaviorTree.SUCCESS
     else:
         return BehaviorTree.RUNNING

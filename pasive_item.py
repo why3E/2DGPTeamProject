@@ -6,6 +6,7 @@ from pico2d import *
 import game_framework
 import game_world
 import play_mode
+import server
 
 
 class Ring:
@@ -129,8 +130,8 @@ class Coin:
     def update(self):
         pass
     def draw(self):
-        sx = self.x - play_mode.background.window_left
-        sy = self.y - play_mode.background.window_bottom
+        sx = self.x - server.background.window_left
+        sy = self.y - server.background.window_bottom
         self.image.draw(sx, sy, 20, 20)
 
     # fill here
@@ -140,7 +141,7 @@ class Coin:
     def handle_collision(self, group, other):
         if group == 'Main:Coin':
             Coin.sound.play()
-            play_mode.main_character.Exp += 20
+            server.main_character.Exp += 20
             game_world.remove_object(self)
 
     def set_image(self,type):

@@ -6,6 +6,7 @@ from pico2d import get_time, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK
 import game_framework
 import item_mode
 import play_mode
+import server
 from atk_item import Sword, Swordline, Magic, Bow, Magic2
 import game_world
 from pasive_item import Ring, Amor, Glove, Meat
@@ -175,8 +176,8 @@ class StateMachine:
 
 class Main_Character:
     def __init__(self):
-        self.x = play_mode.background.w // 2
-        self.y = play_mode.background.h // 2
+        self.x = server.background.w // 2
+        self.y = server.background.h // 2
         self.frame = 0
         self.size = 10
         # 캐릭터의 이동 방향 확인
@@ -201,7 +202,7 @@ class Main_Character:
         # 캐릭터 패시브
         self.hp = 50
         self.hp_max = 50
-        self.atk_speed = 1.0
+        self.hit_back = 4
         self.move_speed = 1.0
         self.atk = 6
         self.level = 1
@@ -239,7 +240,7 @@ class Main_Character:
 
     def update(self):
 
-        if play_mode.play_check is True:
+        if server.play_check is True:
             if self.Exp >= 100*self.level:
                 game_framework.push_mode(item_mode)
                 self.Exp %= 100
@@ -269,11 +270,12 @@ class Main_Character:
 
     def handle_collision(self, group, other):
         current_time = get_time()
-        if group == 'main_character:monster' and current_time - self.last_collision_time > self.invulnerable_time:
-            self.last_collision_time = current_time
-            self.hp -= play_mode.main_character.atk
-            pass
-
+        if server.play_check:
+            if group == 'main_character:monster' and current_time - self.last_collision_time > self.invulnerable_time:
+                self.last_collision_time = current_time
+                self.hp -= server.main_character.atk
+                pass
+# 장갑을 밀어내는 정도를 높이게 하자
     def level_up_item(self, item_type):
         items = {
             'bow': {'attribute': self.bow, 'max_level': 4},
@@ -282,7 +284,7 @@ class Main_Character:
             'magic2': {'attribute': self.magic2, 'max_level': 4},
             'ring': {'attribute': self.ring, 'max_level': float('inf'), 'atk_increase': 5},
             'amor': {'attribute': self.amor, 'max_level': float('inf'), 'hp_increase': 20},
-            'glove': {'attribute': self.glove, 'max_level': 4, 'atk_speed_decrease': 0.1},
+            'glove': {'attribute': self.glove, 'max_level': 4, 'hit_back': 4},
             'meat': {'max_level': float('inf'), 'restore_hp': True}
         }
 
@@ -303,8 +305,8 @@ class Main_Character:
                 self.hp_max += item_info['hp_increase']
                 self.hp += item_info['hp_increase']
 
-            if 'atk_speed_decrease' in item_info:
-                self.atk_speed = 1.0 - item_info['atk_speed_decrease'] * attribute.level
+            if 'hit_back' in item_info:
+                self.hit_back = item_info['hit_back'] * attribute.level
 
             if 'restore_hp' in item_info:
                 self.hp = self.hp_max

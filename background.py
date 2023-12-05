@@ -1,6 +1,7 @@
 from pico2d import load_image, get_canvas_width, get_canvas_height, clamp, load_music
 
 import play_mode
+import server
 
 
 class Background:
@@ -20,12 +21,12 @@ class Background:
         self.image.clip_draw_to_origin(self.q1l, self.q1b, self.q1w, self.q1h, self.q3w, self.q3h)  # quadrant 1
 
     def update(self):
-        self.window_left = int(play_mode.main_character.x) - self.cw // 2
-        self.window_bottom = int(play_mode.main_character.y) - self.ch // 2
+        self.window_left = int(server.main_character.x) - self.cw // 2
+        self.window_bottom = int(server.main_character.y) - self.ch // 2
 
         # quadrant 3
-        self.q3l = (int(play_mode.main_character.x) - self.cw // 2) % self.w
-        self.q3b = (int(play_mode.main_character.y) - self.ch // 2) % self.h
+        self.q3l = (int(server.main_character.x) - self.cw // 2) % self.w
+        self.q3b = (int(server.main_character.y) - self.ch // 2) % self.h
         self.q3w = clamp(0, self.w - self.q3l, self.w)
         self.q3h = clamp(0, self.h - self.q3b, self.h)
 

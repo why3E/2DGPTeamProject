@@ -3,6 +3,7 @@ from pico2d import *
 import game_world
 import game_framework
 import play_mode
+import server
 from pannel import Pannel
 
 
@@ -21,7 +22,7 @@ def handle_events():
                     pannel.check+=1
                     pannel.check %=3
                 case pico2d.SDLK_SPACE:
-                    play_mode.main_character.level_up_item(pannel.item_random_choice[pannel.check])
+                    server.main_character.level_up_item(pannel.item_random_choice[pannel.check])
                     game_framework.pop_mode()
 
 

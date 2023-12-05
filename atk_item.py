@@ -6,6 +6,7 @@ from pico2d import *
 import game_framework
 import game_world
 import play_mode
+import server
 
 
 class Sword:
@@ -38,15 +39,15 @@ class Sword:
             Sword.image = Sword.image1
 
     def draw(self):
-        sx = self.x - play_mode.background.window_left
-        sy = self.y - play_mode.background.window_bottom
+        sx = self.x - server.background.window_left
+        sy = self.y - server.background.window_bottom
         if self.main_character.face_dir == 1:
             Sword.image.draw(sx + self.velocity, sy - 10)
         else:
             Sword.image.clip_composite_draw(0, 0, 32, 32, 0, 'h', sx + self.velocity, sy - 10, 32, 32)
 
     def update(self):
-        if play_mode.play_check is True:
+        if server.play_check is True:
             self.x, self.y, self.velocity = self.main_character.x, self.main_character.y, self.main_character.face_dir * 20
             if self.level in self.image_dict:
                 Sword.image = self.image_dict[self.level]
@@ -61,17 +62,19 @@ class Sword:
                 game_world.add_object(sword_line, 1)
                 game_world.add_collision_pair('atk:monster', None, sword_line)
 
+
 # zombie Action Speed
 animation_names = ['sword']
 
 
 class Swordline:
     images = None
+
     def __init__(self, main_character):
         self.main_character = main_character
         self.x, self.y, self.velocity = main_character.x, main_character.y, main_character.face_dir * 20
         self.frame = 0
-        self.size = 80+self.main_character.sword.level*10
+        self.size = 80 + self.main_character.sword.level * 10
         self.pos = 15
         self.count = 0
         self.wait_time = get_time()
@@ -80,14 +83,14 @@ class Swordline:
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
         self.FRAMES_PER_ACTION = 4.0
 
-        if Swordline.images == None:
+        if Swordline.images is None:
             Swordline.images = {}
             for name in animation_names:
                 Swordline.images[name] = [load_image("source/" + name + " (%d)" % i + ".png") for i in range(1, 4)]
 
     def draw(self):
-        sx = self.x - play_mode.background.window_left
-        sy = self.y - play_mode.background.window_bottom
+        sx = self.x - server.background.window_left
+        sy = self.y - server.background.window_bottom
         if int(self.frame) < 3 and self.count == 0:
             if (self.main_character.face_dir == 1):
                 Swordline.images['sword'][int(self.frame)].draw(sx + self.size / 2, sy - self.pos,
@@ -98,7 +101,7 @@ class Swordline:
                                                                           self.size, self.size)
 
     def update(self):
-        if play_mode.play_check == True:
+        if server.play_check is True:
             self.TIME_PER_ACTION = 0.5 / self.main_character.sword.level
             self.x, self.y, self.velocity = self.main_character.x, self.main_character.y, self.main_character.face_dir * 20
             self.frame = (
@@ -153,48 +156,53 @@ class Magic:
     def update(self):
         if self.level != 0:
             self.invulnerable_time = 2.0 / self.level
-            if play_mode.play_check is True:
+            if server.play_check is True:
                 current_time = time.time()
                 if self.level in self.image_dict:
                     Magic.Magic_image = self.image_dict[self.level]
                 if current_time - self.last_collision_time > self.invulnerable_time:
-                    self.last_collision_time = current_time
-                    magic_circle = Magiccircle()
-                    game_world.add_object(magic_circle)
-                    game_world.add_collision_pair('atk:monster', None, magic_circle)
+                    for i in range(self.level):
+                        self.last_collision_time = current_time
+                        magic_circle = Magiccircle()
+                        game_world.add_object(magic_circle)
+                        game_world.add_collision_pair('atk:monster', None, magic_circle)
+
     def draw(self):
         pass
 
+
 animation_names_two = ['cir']
+
 
 class Magiccircle:
     images = None
+
     def __init__(self):
         self.TIME_PER_ACTION = 0.5
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
         self.FRAMES_PER_ACTION = 4.0
         self.size = 50
         self.frame = 0
-        self.x,self.y = play_mode.main_character.x +random.randint(-400, 400),play_mode.main_character.y +random.randint(-400, 400)
+        self.x, self.y = server.main_character.x + random.randint(-400,
+                                                                     400), server.main_character.y + random.randint(
+            -400, 400)
         if Magiccircle.images is None:
             Magiccircle.images = {}
             for name in animation_names_two:
                 Magiccircle.images[name] = [load_image("source/" + name + " (%d)" % i + ".png") for i in range(1, 5)]
 
-
     def draw(self):
 
-        sx = self.x - play_mode.background.window_left
-        sy = self.y - play_mode.background.window_bottom
+        sx = self.x - server.background.window_left
+        sy = self.y - server.background.window_bottom
         self.images['cir'][int(self.frame)].clip_composite_draw(0, 0, 220, 220, 0, '', sx, sy, self.size, self.size)
 
-
     def update(self):
-        if play_mode.play_check == True:
+        if server.play_check is True:
             self.frame = (self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 4
 
     def get_bb(self):
-        return self.x - self.size/2, self.y - self.size/2, self.x + self.size/2, self.y + self.size/2
+        return self.x - self.size / 2, self.y - self.size / 2, self.x + self.size / 2, self.y + self.size / 2
 
     def handle_collision(self, group, other):
         if group == 'atk:monster':
@@ -208,11 +216,12 @@ class Bow:
     image2 = None
     image3 = None
     image4 = None
+
     def __init__(self, main_character):
         self.main_character = main_character
         self.last_collision_time = time.time()
         self.level = 0
-        self.invulnerable_time = 1.0   # 예시로 2초로 설정
+        self.invulnerable_time = 1.0  # 예시로 2초로 설정
         self.load_images()
         self.image_dict = {
             0: Bow.image1,
@@ -233,15 +242,16 @@ class Bow:
     def update(self):
         if self.level != 0:
             self.invulnerable_time = 1.0 / self.level
-            if play_mode.play_check == True:
+            if server.play_check is True:
                 current_time = time.time()
                 if self.level in self.image_dict:
                     Bow.Bow_image = self.image_dict[self.level]
                 if current_time - self.last_collision_time > self.invulnerable_time:
-                    self.last_collision_time = current_time
-                    arrow = Arrow(self.main_character)
-                    game_world.add_object(arrow)
-                    game_world.add_collision_pair('atk:monster', None, arrow)
+                    for i in range(self.level):
+                        self.last_collision_time = current_time
+                        arrow = Arrow(self.main_character)
+                        game_world.add_object(arrow)
+                        game_world.add_collision_pair('atk:monster', None, arrow)
 
     def draw(self):
         pass
@@ -276,12 +286,12 @@ class Arrow:
         self.frame = random.randint(0, 2)
 
     def draw(self):
-        sx = self.x - play_mode.background.window_left
-        sy = self.y - play_mode.background.window_bottom
+        sx = self.x - server.background.window_left
+        sy = self.y - server.background.window_bottom
         self.images['arrow'][int(self.frame)].clip_composite_draw(0, 0, 96, 41, self.angle, '', sx, sy, 48, 20)
 
     def update(self):
-        if play_mode.play_check == True:
+        if server.play_check is True:
             self.x += self.RUN_SPEED_PPS * math.cos(self.angle)
             self.y += self.RUN_SPEED_PPS * math.sin(self.angle)
 
@@ -289,8 +299,8 @@ class Arrow:
 
             # 화살이 일정 거리 이상 날아가면 제거
 
-            sx = self.x - play_mode.background.window_left
-            sy = self.y - play_mode.background.window_bottom
+            sx = self.x - server.background.window_left
+            sy = self.y - server.background.window_bottom
 
             if sx > 900 or sx < 0 or sy < 0 or sy > 900:
                 game_world.remove_object(self)
@@ -336,22 +346,27 @@ class Magic2:
     def update(self):
         if self.level != 0:
             self.invulnerable_time = 10.0 - self.level
-            if play_mode.play_check == True:
+            if server.play_check is True:
                 current_time = time.time()
                 if self.level in self.image_dict:
                     Magic2.Magic2_image = self.image_dict[self.level]
                 if current_time - self.last_collision_time > self.invulnerable_time:
-                    self.last_collision_time = current_time
-                    magic_circle2 = Magiccircle2()
-                    game_world.add_object(magic_circle2)
-                    game_world.add_collision_pair('atk:monster', None, magic_circle2)
+                    for i in range(self.level):
+                        self.last_collision_time = current_time
+                        magic_circle2 = Magiccircle2()
+                        game_world.add_object(magic_circle2)
+                        game_world.add_collision_pair('atk:monster', None, magic_circle2)
+
     def draw(self):
         pass
 
+
 animation_names_two2 = ['tona']
+
 
 class Magiccircle2:
     images = None
+
     def __init__(self):
         self.TIME_PER_ACTION = 0.5
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
@@ -359,26 +374,27 @@ class Magiccircle2:
         self.size = 150
         self.frame = 0
         self.time = get_time()
-        self.x,self.y = play_mode.main_character.x +random.randint(-400, 400),play_mode.main_character.y +random.randint(-400, 400)
+        self.x, self.y = server.main_character.x + random.randint(-400,
+                                                                     400), server.main_character.y + random.randint(
+            -400, 400)
         if Magiccircle2.images is None:
             Magiccircle2.images = {}
             for name in animation_names_two2:
                 Magiccircle2.images[name] = [load_image("source/" + name + " (%d)" % i + ".png") for i in range(1, 5)]
 
-
     def draw(self):
-        sx = self.x - play_mode.background.window_left
-        sy = self.y - play_mode.background.window_bottom
+        sx = self.x - server.background.window_left
+        sy = self.y - server.background.window_bottom
         self.images['tona'][int(self.frame)].clip_composite_draw(0, 0, 220, 220, 0, '', sx, sy, self.size, self.size)
 
-
     def update(self):
-        if play_mode.play_check == True:
+        if server.play_check is True:
             self.frame = (self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % 4
-            if get_time() - self.time >= 5:
+            if get_time() - self.time >= 3 + server.main_character.magic2.level:
                 game_world.remove_object(self)
+
     def get_bb(self):
-        return self.x - self.size/2, self.y - self.size/2, self.x + self.size/2, self.y + self.size/2
+        return self.x - self.size / 2, self.y - self.size / 2, self.x + self.size / 2, self.y + self.size / 2
 
     def handle_collision(self, group, other):
         if group == 'atk:monster':
