@@ -1,7 +1,7 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
 from pico2d import get_time, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, \
-    SDLK_DOWN, get_canvas_width, get_canvas_height
+    SDLK_DOWN, get_canvas_width, get_canvas_height, load_wav
 
 import game_framework
 import item_mode
@@ -196,6 +196,9 @@ class Main_Character:
         self.hp_image = load_image('source/HP_life.png')
         self.exp_bar_image = load_image('source/EXP_bar.png')
         self.exp_image = load_image('source/EXP_exp.png')
+
+        self.level_sound = load_wav('source/levelup.wav')
+        self.level_sound.set_volume(48)
         self.state_machine = StateMachine(self)
         self.state_machine.start()
         self.item = ['sword', 'magic','magic2', 'bow', 'ring', 'amor', 'glove', 'meat']
@@ -242,6 +245,7 @@ class Main_Character:
 
         if server.play_check is True:
             if self.Exp >= 100*self.level:
+                self.level_sound.play()
                 game_framework.push_mode(item_mode)
                 self.Exp %= 100
                 self.level += 1
