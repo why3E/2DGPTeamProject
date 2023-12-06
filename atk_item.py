@@ -101,6 +101,7 @@ class Swordline:
                 Swordline.images['sword'][int(self.frame)].composite_draw(0, 'h', sx - self.size / 2,
                                                                           sy - self.pos,
                                                                           self.size, self.size)
+        draw_rectangle(*self.get_bb())
 
     def update(self):
         if server.play_check is True:
