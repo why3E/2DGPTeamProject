@@ -42,7 +42,7 @@ class Skeleton_ghost:
         self.dir = random.choice([-1, 1])
         self.dir2 = random.choice([-1, 1])
         self.size = 25
-        self.hp = other.hp * 3
+        self.hp = other.hp * 2
         self.invulnerable_time = 0.4  # 무적 상태 지속 시간 - 캐릭터 공격속도로 지정하면 될듯?
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
@@ -115,7 +115,7 @@ class Slime_Slime:
         self.dir = random.choice([-1, 1])
         self.dir2 = random.choice([-1, 1])
         self.size = 20
-        self.hp = other.hp * 5
+        self.hp = other.hp * 3
         self.invulnerable_time = 0.4  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
@@ -165,7 +165,7 @@ class Sliem_Skeleton:
     death_sound = None
 
     def __init__(self, other):
-        self.hp = other.hp * 5
+        self.hp = other.hp * 2
         self.x = other.x
         self.y = other.y
         self.load_images()
