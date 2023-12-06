@@ -203,8 +203,8 @@ class Main_Character:
         self.state_machine.start()
         self.item = ['sword', 'magic', 'magic2', 'bow', 'ring', 'amor', 'glove', 'meat']
         # 캐릭터 패시브
-        self.hp = 100
-        self.hp_max = 100
+        self.hp = 50
+        self.hp_max = 50
         self.hit_back = 0
         self.move_speed = 1.0
         self.atk = 6
