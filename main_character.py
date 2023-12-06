@@ -211,7 +211,6 @@ class Main_Character:
         self.level = 1
         self.invulnerable_time = 0.2
         self.last_collision_time = 0.0
-        # 경험치 최대량은 level*100 이런식으로 구상
         self.Exp = 0  # 경험치를 채운 정도
         self.damage = 10
 
@@ -268,7 +267,7 @@ class Main_Character:
 
     # fill here
     def get_bb(self):
-        return self.x - self.size, self.y - self.size * 4, self.x + self.size, self.y + self.size - 20
+        return self.x - self.size, self.y - self.size * 4, self.x + self.size, self.y + self.size
 
     def handle_collision(self, group, other):
         current_time = get_time()

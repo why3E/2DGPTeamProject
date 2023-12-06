@@ -158,9 +158,9 @@ class Coin:
         if group == 'Main:Coin':
             Coin.sound.play()
             if self.type == 'monster':
-                server.main_character.Exp += 20
+                server.main_character.Exp += 40
             elif self.type == 'middle_monster':
-                server.main_character.Exp += 80
+                server.main_character.Exp += 120
             game_world.remove_object(self)
 
     def set_image(self, type):

@@ -9,7 +9,7 @@ from pasive_item import Coin
 
 # zombie Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
-RUN_SPEED_KMPH = 10.0  # Km / Hour
+RUN_SPEED_KMPH = 13.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -193,6 +193,7 @@ class Sliem_Skeleton:
             # fill here
             self.bt.run()
 
+
     def draw(self):
         sx = self.x - server.background.window_left
         sy = self.y - server.background.window_bottom
@@ -261,6 +262,5 @@ def behavior_tree(self):
     a1 = Action('Set target location', set_target_location, self, 500, 50)  # action node 생성
     a2 = Action('Move to', move_to_main_character, self)
     root = SEQ_move_to_target_location = Sequence('Move to target location', a1, a2)
-
     self.bt = BehaviorTree(root)
     pass

@@ -14,7 +14,7 @@ class Background:
         self.w = self.image.w
         self.h = self.image.h
         self.bgm = load_music('source/battle_bgm.mp3')
-        self.bgm.set_volume(48)
+        self.bgm.set_volume(32)
         self.bgm.repeat_play()
 
     def draw(self):
