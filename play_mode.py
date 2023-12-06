@@ -3,8 +3,8 @@ from pico2d import *
 import game_world
 import item_mode
 import title_mode
-from background import Background
-from main_character import Main_Character
+from background import Background, Background_sub
+from main_character import Main_Character, Exp
 import game_framework
 from monster import Ghost, Slime, Skeleton
 import server
@@ -39,12 +39,17 @@ def init():
     font = load_font('source/ENCR10B.TTF', 32)
 
     monster_count = 1
-    start_time = get_time() + 1
-    elapsed_time = get_time() + 1
-    time_check = get_time() + 1
+    start_time = get_time()
+    elapsed_time = get_time()
+    time_check = get_time()
     paturn_time = 2
     time_count = 240
 
+    background_sub = Background_sub()
+    game_world.add_object(background_sub, 2)
+
+    exp = Exp()
+    game_world.add_object(exp, 2)
     server.play_check = True
 
     server.background = Background()
@@ -54,7 +59,6 @@ def init():
     game_world.add_object(server.main_character, 1)
     game_world.add_collision_pair('main_character:monster', None, server.main_character)
     game_world.add_collision_pair('Main:Coin', server.main_character, None)
-    # 메인 캐릭터 초기값을 json이나 피클로 초기화 해서 파일 읽어들이는 걸로 수정해야함
 
 
 def update():
@@ -64,16 +68,12 @@ def update():
     global monster_count
     global time_count, time_check
 
-    if server.main_character.hp <= 0:
-        game_world.clear()
-        game_framework.change_mode(title_mode)
-
     game_world.update()
     game_world.handle_collisions()
 
     current_time = get_time()
 
-    if int(current_time - elapsed_time) >= 20:  # 20초가 경과했는지 확인
+    if int(current_time - elapsed_time) >= 30:  # 20초가 경과했는지 확인
         elapsed_time = current_time  # 경과 시간 초기화
         monster_count += 1
         print('패턴')  # 패턴 주기를 20초로 변경
@@ -96,7 +96,7 @@ def draw():
 
     clear_canvas()
     game_world.render()
-    font.draw(get_canvas_width() - 100, get_canvas_height() -50 , f'{time_count:03d}', (255, 255, 255))
+    font.draw(get_canvas_width() - 100, get_canvas_height() - 50, f'{time_count:03d}', (255, 255, 255))
     update_canvas()
 
 
@@ -134,7 +134,7 @@ def monster_make():
     game_world.add_collision_pair('main_character:monster', skeleton, None)
     game_world.add_collision_pair('atk:monster', skeleton, None)
 
-    if monster_count > 5:
+    if monster_count > 4:
         game_world.add_collision_pair('ghost:skeleton', ghost, None)
         game_world.add_collision_pair('ghost:skeleton', None, skeleton)
 

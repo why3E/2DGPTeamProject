@@ -24,6 +24,7 @@ class Sword:
         self.invulnerable_time = 2.0 / self.level
         self.last_collision_time = time.time()
         self.image_dict = {
+            0: Sword.image1,
             1: Sword.image1,
             2: Sword.image2,
             3: Sword.image3,
@@ -36,6 +37,8 @@ class Sword:
             Sword.image2 = load_image('source/sword_02.png')
             Sword.image3 = load_image('source/sword_03.png')
             Sword.image4 = load_image('source/sword_04.png')
+            Sword.image = Sword.image1
+        else:
             Sword.image = Sword.image1
 
     def draw(self):
@@ -76,7 +79,6 @@ class Swordline:
         self.frame = 0
         self.size = 80 + self.main_character.sword.level * 10
         self.pos = 15
-        self.count = 0
         self.wait_time = get_time()
 
         self.TIME_PER_ACTION = 0.5 / self.main_character.sword.level
@@ -91,11 +93,11 @@ class Swordline:
     def draw(self):
         sx = self.x - server.background.window_left
         sy = self.y - server.background.window_bottom
-        if int(self.frame) < 3 and self.count == 0:
-            if (self.main_character.face_dir == 1):
+        if int(self.frame) < 3:
+            if self.main_character.face_dir == 1:
                 Swordline.images['sword'][int(self.frame)].draw(sx + self.size / 2, sy - self.pos,
                                                                 self.size, self.size)
-            elif (self.main_character.face_dir == -1):
+            elif self.main_character.face_dir == -1:
                 Swordline.images['sword'][int(self.frame)].composite_draw(0, 'h', sx - self.size / 2,
                                                                           sy - self.pos,
                                                                           self.size, self.size)
@@ -107,12 +109,8 @@ class Swordline:
             self.frame = (
                                  self.frame + self.FRAMES_PER_ACTION * self.ACTION_PER_TIME * game_framework.frame_time) % self.FRAMES_PER_ACTION
 
-            if int(self.frame) == 3 and self.count == 3:
-                game_world.remove_object(self)
             if int(self.frame) == 3:
-                self.count += 1
-                self.frame = 0
-                self.size = 0
+                game_world.remove_object(self)
 
     def get_bb(self):
         if self.main_character.face_dir == 1:
@@ -152,6 +150,8 @@ class Magic:
             Magic.image3 = load_image('source/saintring_02.png')
             Magic.image4 = load_image('source/saintring_03.png')
             Magic.Magic_image = Magic.image1
+        else:
+            Magic.Magic_image = Magic.image1
 
     def update(self):
         if self.level != 0:
@@ -184,7 +184,7 @@ class Magiccircle:
         self.size = 50
         self.frame = 0
         self.x, self.y = server.main_character.x + random.randint(-400,
-                                                                     400), server.main_character.y + random.randint(
+                                                                  400), server.main_character.y + random.randint(
             -400, 400)
         if Magiccircle.images is None:
             Magiccircle.images = {}
@@ -237,6 +237,8 @@ class Bow:
             Bow.image2 = load_image('source/bow_01.png')
             Bow.image3 = load_image('source/bow_02.png')
             Bow.image4 = load_image('source/bow_03.png')
+            Bow.Bow_image = Bow.image1
+        else:
             Bow.Bow_image = Bow.image1
 
     def update(self):
@@ -342,6 +344,8 @@ class Magic2:
             Magic2.image3 = load_image('source/wand_02.png')
             Magic2.image4 = load_image('source/wand_03.png')
             Magic2.Magic2_image = Magic2.image1
+        else:
+            Magic2.Magic2_image = Magic2.image1
 
     def update(self):
         if self.level != 0:
@@ -375,7 +379,7 @@ class Magiccircle2:
         self.frame = 0
         self.time = get_time()
         self.x, self.y = server.main_character.x + random.randint(-400,
-                                                                     400), server.main_character.y + random.randint(
+                                                                  400), server.main_character.y + random.randint(
             -400, 400)
         if Magiccircle2.images is None:
             Magiccircle2.images = {}

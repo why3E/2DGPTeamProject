@@ -9,7 +9,7 @@ from pasive_item import Coin
 
 # zombie Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
-RUN_SPEED_KMPH = 7.0  # Km / Hour
+RUN_SPEED_KMPH = 10.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -43,20 +43,21 @@ class Skeleton_ghost:
         self.dir2 = random.choice([-1, 1])
         self.size = 25
         self.hp = other.hp * 3
-        self.invulnerable_time = 0.2  # 무적 상태 지속 시간 - 캐릭터 공격속도로 지정하면 될듯?
+        self.invulnerable_time = 0.4  # 무적 상태 지속 시간 - 캐릭터 공격속도로 지정하면 될듯?
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
         self.bt = None
         behavior_tree(self)
         self.should_draw = True  # draw 함수를 호출해야 할지 여부를 나타내는 변수
         self.draw_timer = get_time()  # 타
+
     def update(self):
         if server.play_check is True:
             self.frame = (
                                  self.frame + SKELETON_GHOST_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SKELETON_GHOST_FRAMES_PER_ACTION
             self.bt.run()
             current_time = get_time()
-            if current_time - self.draw_timer >= 3:
+            if current_time - self.draw_timer >= 1:
                 self.should_draw = not self.should_draw  # True와 False를 번갈아가면서 변경
                 self.draw_timer = current_time
             pass
@@ -90,6 +91,8 @@ class Skeleton_ghost:
                 game_world.add_object(coin, 1)
                 game_world.add_collision_pair('Main:Coin', None, coin)
                 game_world.remove_object(self)
+        elif group == 'main_character:monster':
+            pass
 
 
 class Slime_Slime:
@@ -112,8 +115,8 @@ class Slime_Slime:
         self.dir = random.choice([-1, 1])
         self.dir2 = random.choice([-1, 1])
         self.size = 20
-        self.hp = other.hp * 4
-        self.invulnerable_time = 0.2  # 무적 상태 지속 시간
+        self.hp = other.hp * 5
+        self.invulnerable_time = 0.4  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
         self.bt = None
@@ -153,6 +156,8 @@ class Slime_Slime:
                 game_world.add_object(coin, 1)
                 game_world.add_collision_pair('Main:Coin', None, coin)
                 game_world.remove_object(self)
+        elif group == 'main_character:monster':
+            pass
 
 
 class Sliem_Skeleton:
@@ -160,15 +165,15 @@ class Sliem_Skeleton:
     death_sound = None
 
     def __init__(self, other):
-        self.hp = 25
+        self.hp = other.hp * 5
         self.x = other.x
         self.y = other.y
         self.load_images()
         self.frame = random.randint(0, 4)
         self.dir = random.choice([-1, 1])
         self.dir2 = random.choice([-1, 1])
-        self.size = other.hp * 5
-        self.invulnerable_time = 0.2  # 무적 상태 지속 시간
+        self.size = 30
+        self.invulnerable_time = 0.5  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
         self.bt = None
@@ -192,9 +197,9 @@ class Sliem_Skeleton:
         sx = self.x - server.background.window_left
         sy = self.y - server.background.window_bottom
         if math.cos(self.dir) >= 0:
-            self.image.clip_composite_draw(int(self.frame) * 56, 0, 56, 46, 0, 'h', sx, sy, 50, 50)
+            self.image.clip_composite_draw(int(self.frame) * 56, 0, 56, 46, 0, 'h', sx, sy, 60, 60)
         else:
-            self.image.clip_draw(int(self.frame) * 56, 0, 56, 46, sx, sy, 50, 50)
+            self.image.clip_draw(int(self.frame) * 56, 0, 56, 46, sx, sy, 60, 60)
 
     # fill here
     def get_bb(self):
@@ -216,8 +221,9 @@ class Sliem_Skeleton:
                 coin = Coin(self, 'middle_monster')
                 game_world.add_object(coin, 1)
                 game_world.add_collision_pair('Main:Coin', None, coin)
-
                 game_world.remove_object(self)
+        elif group == 'main_character:monster':
+            pass
 
 
 def set_target_location(self, x=None, y=None):

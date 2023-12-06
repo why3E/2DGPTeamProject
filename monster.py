@@ -56,7 +56,7 @@ class Ghost:
         self.dir2 = random.choice([-1, 1])
         self.size = 16
         self.hp = hp
-        self.invulnerable_time = 0.2  # 무적 상태 지속 시간 - 캐릭터 공격속도로 지정하면 될듯?
+        self.invulnerable_time = 0.4  # 무적 상태 지속 시간 - 캐릭터 공격속도로 지정하면 될듯?
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
         self.bt = None
@@ -111,7 +111,8 @@ class Ghost:
 
                 game_world.remove_object(self)
 
-
+            elif group == 'main_character:monster':
+                pass
 class Slime:
     image = None
     death_sound = None
@@ -136,7 +137,7 @@ class Slime:
         self.dir2 = random.choice([-1, 1])
         self.size = 16
         self.hp = hp
-        self.invulnerable_time = 0.2  # 무적 상태 지속 시간
+        self.invulnerable_time = 0.4  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
 
@@ -188,7 +189,8 @@ class Slime:
             elif group == 'slime:skeleton':
                 game_world.remove_object(self)
 
-
+            elif group == 'main_character:monster':
+                pass
 class Skeleton:
     image = None
     death_sound = None
@@ -213,7 +215,7 @@ class Skeleton:
         self.dir = random.choice([-1, 1])
         self.dir2 = random.choice([-1, 1])
         self.size = 16
-        self.invulnerable_time = 0.2  # 무적 상태 지속 시간
+        self.invulnerable_time = 0.4  # 무적 상태 지속 시간
         self.last_collision_time = 0.0
         self.tx, self.ty = 1000, 1000
         self.bt = None
@@ -266,7 +268,8 @@ class Skeleton:
                 game_world.remove_object(self)
             elif group == 'ghost:skeleton':
                 game_world.remove_object(self)
-
+            elif group == 'main_character:monster':
+                pass
 
 def set_target_location(self, x=None, y=None):
     if not x or not y:

@@ -1,11 +1,6 @@
-import random
-import time
-
 from pico2d import *
 
-import game_framework
 import game_world
-import play_mode
 import server
 
 
@@ -33,12 +28,18 @@ class Ring:
             Ring.image3 = load_image('source/ring_03.png')
             Ring.image4 = load_image('source/ring_04.png')
             Ring.Ring_image = Ring.image1
+        else:
+            Ring.Ring_image = Ring.image1
 
-    def draw(self):pass
+    def draw(self):
+        pass
+
     def update(self):
         if self.level in self.image_dict:
             Ring.Ring_image = self.image_dict[self.level]
         pass
+
+
 class Glove:
     Glove_image = None
     image1 = None
@@ -63,12 +64,17 @@ class Glove:
             Glove.image3 = load_image('source/glove_02.png')
             Glove.image4 = load_image('source/glove_03.png')
             Glove.Glove_image = Glove.image1
+        else:
+            Glove.Glove_image = Glove.image1
 
-    def draw(self):pass
+    def draw(self):
+        pass
+
     def update(self):
         if self.level in self.image_dict:
             Glove.Glove_image = self.image_dict[self.level]
         pass
+
 
 class Amor:
     Amor_image = None
@@ -94,28 +100,36 @@ class Amor:
             Amor.image3 = load_image('source/shield_02.png')
             Amor.image4 = load_image('source/shield_03.png')
             Amor.Amor_image = Amor.image1
+        else:
+            Amor.Amor_image = Amor.image1
 
-    def draw(self):pass
+    def draw(self):
+        pass
+
     def update(self):
         if self.level in self.image_dict:
             Amor.Amor_image = self.image_dict[self.level]
         pass
 
+
 class Meat:
     Meat_image = None
+
     def __init__(self):
         if Meat.Meat_image is None:
             Meat.Meat_image = load_image('source/meat.png')
 
-    def draw(self):pass
-    def update(self):pass
+    def draw(self): pass
+
+    def update(self): pass
 
 
 class Coin:
     image1 = None
     image2 = None
     sound = None
-    def __init__(self, other,type):
+
+    def __init__(self, other, type):
         if Coin.image1 is None:
             Coin.image1 = load_image('source/coin.png')
             Coin.image2 = load_image('source/coins.png')
@@ -126,9 +140,11 @@ class Coin:
         self.x = other.x
         self.y = other.y
         self.size = 10
+        self.type =type
 
     def update(self):
         pass
+
     def draw(self):
         sx = self.x - server.background.window_left
         sy = self.y - server.background.window_bottom
@@ -141,11 +157,14 @@ class Coin:
     def handle_collision(self, group, other):
         if group == 'Main:Coin':
             Coin.sound.play()
-            server.main_character.Exp += 20
+            if self.type == 'monster':
+                server.main_character.Exp += 20
+            elif self.type == 'middle_monster':
+                server.main_character.Exp += 80
             game_world.remove_object(self)
 
-    def set_image(self,type):
+    def set_image(self, type):
         if type == 'monster':
             return Coin.image1
-        elif type =='middle_monster':
+        elif type == 'middle_monster':
             return Coin.image2

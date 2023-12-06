@@ -1,12 +1,13 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
 from pico2d import get_time, load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, \
-    SDLK_DOWN, get_canvas_width, get_canvas_height, load_wav
+    SDLK_DOWN, get_canvas_width, get_canvas_height, load_wav, draw_rectangle
 
 import game_framework
 import item_mode
 import play_mode
 import server
+import title_mode
 from atk_item import Sword, Swordline, Magic, Bow, Magic2
 import game_world
 from pasive_item import Ring, Amor, Glove, Meat
@@ -89,9 +90,9 @@ class Idle:
     @staticmethod
     def draw(main_character):
         sx, sy = get_canvas_width() // 2, get_canvas_height() // 2
-        if (main_character.face_dir == 1):
-            main_character.image.clip_draw(0, 0, 32, 64, sx, sy)
-        elif (main_character.face_dir == -1):
+        if main_character.face_dir == 1:
+            main_character.image.clip_draw(0, 0, 32, 64, sx, sy, 32, 64)
+        elif main_character.face_dir == -1:
             main_character.image.clip_composite_draw(0, 0, 32, 64, 0, 'h', sx, sy, 32, 64)
         main_character.hp_bar_image.clip_draw(0, 0, 46, 12, sx, sy - 50,
                                               main_character.hp_max + 6, 12)
@@ -133,10 +134,10 @@ class Run:
     def draw(main_character):
         sx, sy = get_canvas_width() // 2, get_canvas_height() // 2
         if main_character.face_dir == 1:
-            main_character.image.clip_draw(int(main_character.frame) * 32, 0, 32, 64, sx,sy)
+            main_character.image.clip_draw(int(main_character.frame) * 32, 0, 32, 64, sx, sy, 32, 64)
         elif main_character.face_dir == -1:
             main_character.image.clip_composite_draw(int(main_character.frame) * 32, 0, 32, 64, 0, 'h',
-                                                     sx,sy, 32, 64)
+                                                     sx, sy, 32, 64)
         main_character.hp_bar_image.clip_draw(0, 0, 46, 12, sx, sy - 50,
                                               main_character.hp_max + 6, 12)
         main_character.hp_image.clip_draw(0, 0, 30, 6,
@@ -159,7 +160,6 @@ class StateMachine:
 
     def update(self):
         self.cur_state.do(self.main_character)
-
 
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
@@ -201,15 +201,15 @@ class Main_Character:
         self.level_sound.set_volume(48)
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-        self.item = ['sword', 'magic','magic2', 'bow', 'ring', 'amor', 'glove', 'meat']
+        self.item = ['sword', 'magic', 'magic2', 'bow', 'ring', 'amor', 'glove', 'meat']
         # 캐릭터 패시브
-        self.hp = 50
-        self.hp_max = 50
-        self.hit_back = 4
+        self.hp = 100
+        self.hp_max = 100
+        self.hit_back = 0
         self.move_speed = 1.0
         self.atk = 6
         self.level = 1
-        self.invulnerable_time = 1.0
+        self.invulnerable_time = 0.2
         self.last_collision_time = 0.0
         # 경험치 최대량은 level*100 이런식으로 구상
         self.Exp = 0  # 경험치를 채운 정도
@@ -244,7 +244,7 @@ class Main_Character:
     def update(self):
 
         if server.play_check is True:
-            if self.Exp >= 100*self.level:
+            if self.Exp >= 100 * self.level:
                 self.level_sound.play()
                 game_framework.push_mode(item_mode)
                 self.Exp %= 100
@@ -265,21 +265,24 @@ class Main_Character:
 
     def draw(self):
         self.state_machine.draw()
-        self.exp_bar_image.clip_draw(0, 0, 49, 6, get_canvas_width()//2, get_canvas_height() - 25, 400 + 15, 50)
-        self.exp_image.clip_draw(0, 0, 49, 6, get_canvas_width()//2 + (self.Exp/self.level - 100) * 2, get_canvas_height() - 25, (self.Exp/self.level * 4), 32)
 
     # fill here
     def get_bb(self):
-        return self.x - self.size, self.y - self.size * 4, self.x + self.size, self.y + self.size - 5
+        return self.x - self.size, self.y - self.size * 4, self.x + self.size, self.y + self.size - 20
 
     def handle_collision(self, group, other):
         current_time = get_time()
         if server.play_check:
             if group == 'main_character:monster' and current_time - self.last_collision_time > self.invulnerable_time:
                 self.last_collision_time = current_time
-                self.hp -= server.main_character.atk
+                self.hp -= 5
+
+                if server.main_character.hp <= 0:
+                    game_world.clear()
+                    game_framework.change_mode(title_mode)
                 pass
-# 장갑을 밀어내는 정도를 높이게 하자
+
+    # 장갑을 밀어내는 정도를 높이게 하자
     def level_up_item(self, item_type):
         items = {
             'bow': {'attribute': self.bow, 'max_level': 4},
@@ -314,3 +317,20 @@ class Main_Character:
 
             if 'restore_hp' in item_info:
                 self.hp = self.hp_max
+
+
+class Exp:
+    def __init__(self):
+
+        self.exp_bar_image = load_image('source/EXP_bar.png')
+        self.exp_image = load_image('source/EXP_exp.png')
+
+        self.cw = get_canvas_width()
+        self.ch = get_canvas_height()
+
+    def draw(self):
+
+        self.exp_bar_image.clip_draw(0, 0, 49, 6, get_canvas_width() // 2, get_canvas_height() - 25, 400 + 15, 50)
+        self.exp_image.clip_draw(0, 0, 49, 6, get_canvas_width() // 2 + (server.main_character.Exp / server.main_character.level - 100) * 2,
+                                 get_canvas_height() - 25, (server.main_character.Exp / server.main_character.level * 4), 32)
+    def update(self): pass

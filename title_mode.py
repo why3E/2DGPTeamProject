@@ -5,6 +5,7 @@ from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE
 import game_framework
 import game_world
 import play_mode
+import server
 
 
 def init():
