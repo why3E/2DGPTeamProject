@@ -9,11 +9,14 @@ import server
 
 
 def init():
-    global image,image2,image3,ch,cw,bgm
+    global image,image2,image3,ch,cw,bgm,image4,image5
     global font, font2
     image = load_image('source/title_image.png')
     image2 = load_image('source/start_UI.png')
     image3 = load_image('source/start_button.png')
+
+    image4 = load_image('source/hero_a.png')
+    image5 = load_image('source/hero_b.png')
     cw = get_canvas_width()
     ch = get_canvas_height()
 
@@ -39,6 +42,8 @@ def draw():
     image.clip_draw(0,0,720,580,cw//2,ch//2,cw, ch)
     image2.clip_draw(0,0,116,33,cw//2,150,300,100)
     image3.clip_draw(0,0,122,29,cw//2,170,100,40)
+    image4.draw(100,100,400,400)
+    image5.draw(cw-200,200,200,200)
     font.draw(150, 450, f'Only Alive', (255, 255, 255))
     font2.draw(325, 50, f'start is space', (255, 255, 255))
     update_canvas()
