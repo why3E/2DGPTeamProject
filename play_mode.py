@@ -131,7 +131,7 @@ def monster_make():
     game_world.add_collision_pair('main_character:monster', skeleton, None)
     game_world.add_collision_pair('atk:monster', skeleton, None)
 
-    if monster_count > 4:
+    if monster_count > 5:
         game_world.add_collision_pair('ghost:skeleton', ghost, None)
         game_world.add_collision_pair('ghost:skeleton', None, skeleton)
 
